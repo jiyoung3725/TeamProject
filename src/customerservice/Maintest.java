@@ -21,7 +21,7 @@ public class Maintest extends JFrame {
 	JTextField jtf_search;
 	Inner_qna tab01;
 	Qna_List tab02;
-	 
+	
 	public Maintest() {
 		JPanel frequent_qna = new JPanel();
 		btn_search = new JButton("검색");

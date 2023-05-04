@@ -121,7 +121,7 @@ public class Qna_List extends JPanel {
 		model1.addRow(rowData);
 	}
 		
- 
+
 	public static void main(String[] args) {
 		new Qna_List();
 	}
