@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 
 import dao.BoardDAO;
 import vo.BoardVO;
-
+//수정 예정
 public class Board extends JFrame {
 	JTextField jtf_search;
 	JComboBox<String> jcb_option;	//같이해요, 우리동네 선택

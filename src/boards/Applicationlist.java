@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
-
+//수정 예정
 public class Applicationlist extends JFrame implements ActionListener {
     JLabel title, content;
     JTable table;

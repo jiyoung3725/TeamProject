@@ -18,6 +18,7 @@ public class BoardVO {
 		super();
 	}
 
+	
 	public BoardVO(int no, String address, String category, String interest, String title, String b_content,
 			Date date_create, String appilcation, int b_cnt, int l_cnt) {
 		super();

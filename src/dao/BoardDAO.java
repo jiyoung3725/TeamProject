@@ -11,6 +11,7 @@ import db.ConnectionProvider;
 import vo.BoardVO;
 
 public class BoardDAO {
+	
 	// 모든 게시글 조회
 	public ArrayList<BoardVO> viewAllList(){
 		ArrayList<BoardVO> list = new ArrayList<>();

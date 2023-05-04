@@ -3,7 +3,7 @@ package boards;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-
+//수정 예정
 public class Application extends JFrame implements ActionListener {
     JLabel title, content;
     JTextArea contentTextArea;
