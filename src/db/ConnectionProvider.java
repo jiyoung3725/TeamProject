@@ -8,13 +8,13 @@ import java.sql.Statement;
 import java.util.Spliterator;
 
 public class ConnectionProvider {
-	//JDBC µå¶óÀÌ¹ö¸¦ ¸Þ¸ð¸®·Î ·ÎµåÇÏ°í DB¼­¹ö¿¡ ¿¬°áÇÑ Ä¿³Ø¼Ç °´Ã¼¸¦ ¹ÝÈ¯ÇÏ´Â Å¬·¡½º ¸Þ¼­µå ¸¸µé±â
+	//JDBC ï¿½ï¿½ï¿½ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½Þ¸ð¸®·ï¿½ ï¿½Îµï¿½ï¿½Ï°ï¿½ DBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä¿ï¿½Ø¼ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ï´ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 	public static Connection getConnecton() {
 		Connection conn = null;
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE","C##SIST0426","SIST0426");
-		} catch (Exception e) {System.out.println("getConnection() ¿¹¿Ü ¹ß»ý : "+e.getMessage());}
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE","C##yein","yein");
+		} catch (Exception e) {System.out.println("getConnection() ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ : "+e.getMessage());}
 		return conn;
 	}
 	
@@ -23,12 +23,12 @@ public class ConnectionProvider {
 			rs.close();
 			stmt.close();
 			conn.close();
-		} catch (Exception e) {System.out.println("close() ¿¹¿Ü ¹ß»ý : "+e.getMessage());}
+		} catch (Exception e) {System.out.println("close() ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ : "+e.getMessage());}
 	}
 	public static void close(Statement stmt, Connection conn) {
 		try {
 			stmt.close();
 			conn.close();
-		} catch (Exception e) {System.out.println("close() ¿¹¿Ü ¹ß»ý : "+e.getMessage());}
+		} catch (Exception e) {System.out.println("close() ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ : "+e.getMessage());}
 	}
 }

@@ -1,8 +1,10 @@
 package boards;
 
-
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -17,24 +19,29 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
+import dao.BoardDAO;
+import vo.BoardVO;
+//ìˆ˜ì • ì˜ˆì •
 public class Board extends JFrame {
 	JTextField jtf_search;
-	JComboBox<String> jcb_option;	//°°ÀÌÇØ¿ä, ¿ì¸®µ¿³× ¼±ÅÃ
-	String []interest = {"°Ç°­/¿îµ¿","À½½Ä/¿ä¸®","¿µÈ­/°ø¿¬/Àü½Ã","¹Ì¼ú/°ø¿¹","³ë·¡/À½¾Ç","ÀçÅ×Å©","±âÅ¸"};
+	JComboBox<String> jcb_option;	//ê°™ì´í•´ìš”, ìš°ë¦¬ë™ë„¤ ì„ íƒ
+	String []interest = {"ê±´ê°•/ìš´ë™","ìŒì‹/ìš”ë¦¬","ì˜í™”/ê³µì—°/ì „ì‹œ","ë¯¸ìˆ /ê³µì˜ˆ","ë…¸ë˜/ìŒì•…","ì¬í…Œí¬","ê¸°íƒ€"};
 	JCheckBox []jcb = new JCheckBox[interest.length];
 	JTable table;
 	Vector<String> colNames;
 	Vector<Vector<String>> rowData;
+	JRadioButton jrb_option1;
+	JRadioButton jrb_option2;
 		
 	public Board() {
-		JPanel p_main = new JPanel();	//°Ô½ÃÆÇ ¸ŞÀÎ È­¸é
+		JPanel p_main = new JPanel();	//ê²Œì‹œíŒ ë©”ì¸ í™”ë©´
 		p_main.setLayout(new BorderLayout());
-		JPanel p_search1 = new JPanel();	//°Ë»öÃ¢ ÀüÃ¼ ÆĞ³Î
-		JPanel p_search2 = new JPanel();	//°Ë»öÃ¢ »ó´Ü
-		JPanel p_search3 = new JPanel();	//°Ë»öÃ¢ ÇÏ´Ü
-		JPanel p_interest = new JPanel();	//°ü½É»ç °Ë»ö ÆĞ³Î
+		JPanel p_search1 = new JPanel();	//ê²€ìƒ‰ì°½ ì „ì²´ íŒ¨ë„
+		JPanel p_search2 = new JPanel();	//ê²€ìƒ‰ì°½ ìƒë‹¨
+		JPanel p_search3 = new JPanel();	//ê²€ìƒ‰ì°½ í•˜ë‹¨
+		JPanel p_interest = new JPanel();	//ê´€ì‹¬ì‚¬ ê²€ìƒ‰ íŒ¨ë„
 		p_interest.setLayout(new GridLayout(7,1));
-		JPanel p_etc = new JPanel();	//±Û¾²±â, ÆäÀÌÁö ³Ñ±è
+		JPanel p_etc = new JPanel();	//ê¸€ì“°ê¸°, í˜ì´ì§€ ë„˜ê¹€
 		p_etc.setLayout(new GridLayout(1,3));
 		JPanel p_etc1 = new JPanel();
 		JPanel p_etc2 = new JPanel();
@@ -45,17 +52,18 @@ public class Board extends JFrame {
 		
 		p_search1.setLayout(new GridLayout(3,1));
 		jcb_option = new JComboBox<String>();
-		jcb_option.addItem("ÇÔ²²ÇØ¿ä");
-		jcb_option.addItem("µ¿³×»ıÈ°");
+		jcb_option.addItem("í•¨ê»˜í•´ìš”");
+		jcb_option.addItem("ë™ë„¤ìƒí™œ");
 		
 		jtf_search = new JTextField(20);
-		JButton btn_search = new JButton("°Ë»ö");
-		JButton btn_clear = new JButton("ÃÊ±âÈ­");
-		JRadioButton jrb_option1 = new JRadioButton("ÀÎ±â¼ø") ;	//ÀÎ±â¼ø Á¤·Ä
-		JRadioButton jrb_option2 = new JRadioButton("ÃÖ½Å¼ø");	//ÃÖ½Å¼ø Á¤·Ä
+		JButton btn_search = new JButton("ê²€ìƒ‰");
+		JButton btn_clear = new JButton("ì´ˆê¸°í™”");
+		jrb_option1 = new JRadioButton("ì¸ê¸°ìˆœ") ;	//ì¸ê¸°ìˆœ ì •ë ¬
+		jrb_option2 = new JRadioButton("ìµœì‹ ìˆœ");	//ìµœì‹ ìˆœ ì •ë ¬
 		ButtonGroup bg = new ButtonGroup();
 		bg.add(jrb_option1);
 		bg.add(jrb_option2);
+		
 		
 		p_search2.add(jcb_option);
 		p_search2.add(jtf_search);
@@ -77,35 +85,95 @@ public class Board extends JFrame {
 		colNames = new Vector<String>();
 		rowData = new Vector<Vector<String>>();
 		
-		colNames.add("¹øÈ£");
-		colNames.add("À§Ä¡");
-		colNames.add("Á¦¸ñ");
-		colNames.add("ÀÛ¼ºÀÚ");
-		colNames.add("ÀÛ¼º³¯Â¥");
-		colNames.add("±â°£");
-		colNames.add("¸ğÁı¿©ºÎ");
-		colNames.add("¢¾");
-		colNames.add("Á¶È¸¼ö");
+		colNames.add("ë²ˆí˜¸");
+		colNames.add("ê³ ê°ë²ˆí˜¸");
+		colNames.add("ìœ„ì¹˜");
+		colNames.add("ì¹´í…Œê³ ë¦¬");
+		colNames.add("ê´€ì‹¬ì‚¬");
+		
+		colNames.add("ì‘ì„±ë‚ ì§œ");
+		colNames.add("ëª¨ì§‘ì—¬ë¶€");
+		colNames.add("ì¡°íšŒìˆ˜");
+		colNames.add("â™¥");
 		table = new JTable(rowData, colNames);
 		JScrollPane jsp = new JScrollPane(table);
 		p_main.add(jsp, BorderLayout.CENTER);
 		
-		JButton btn_pre = new JButton("ÀÌÀü");
-		JLabel jlb_page = new JLabel("page");	//page ¹øÈ£¿¡ µû¶ó ¹Ù²îµµ·Ï ¼öÁ¤ ¿¹Á¤
-		JButton btn_post = new JButton("´ÙÀ½");
+		JButton btn_pre = new JButton("ì´ì „");
+		JLabel jlb_page = new JLabel("page");	//page ë²ˆí˜¸ì— ë”°ë¼ ë°”ë€Œë„ë¡ ìˆ˜ì • ì˜ˆì •
+		JButton btn_post = new JButton("ë‹¤ìŒ");
 		p_etc2.add(btn_pre);
 		p_etc2.add(jlb_page);
 		p_etc2.add(btn_post);
 		
-		JButton btn_write = new JButton("°Ô½Ã±Û ÀÛ¼º");
+		JButton btn_write = new JButton("ê²Œì‹œê¸€ ì‘ì„±");
 		p_etc3.add(btn_write);
 		p_main.add(p_etc, BorderLayout.SOUTH);
 		add(p_main);
 		
+		loadAllList(); 
 		setSize(800, 600);
 		setVisible(true);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		jrb_option1.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String l = jrb_option1.getActionCommand();
+				if(l.equals("ì¸ê¸°ìˆœ")) loadlikedList();
+			}
+		});
 	}
 	
-
+	
+	
+	public void loadAllList() {
+		
+		rowData.clear();
+		BoardDAO dao = new BoardDAO();
+		ArrayList<BoardVO> list = dao.viewAllList();
+		
+		for( BoardVO b :list) {
+			Vector<String> v = new Vector<>();
+			v.add(b.getNo()+"");
+			v.add(b.getAddress());
+			v.add(b.getCategory());
+			v.add(b.getInterest());
+			v.add(b.getTitle());
+			v.add(b.getDate_create()+"");
+			v.add(b.getAppilcation());
+			v.add(b.getB_cnt()+"");
+			v.add(b.getL_cnt()+"");
+			rowData.add(v);
+		}
+		table.updateUI();
 	}
+	
+public void loadlikedList() {
+		rowData.clear();
+		BoardDAO dao = new BoardDAO();
+		ArrayList<BoardVO> list = dao.viewLikedList();
+		
+		for( BoardVO b :list) {
+			Vector<String> v = new Vector<>();
+			v.add(b.getNo()+"");
+			v.add(b.getAddress());
+			v.add(b.getCategory());
+			v.add(b.getInterest());
+			v.add(b.getTitle());
+			v.add(b.getDate_create()+"");
+			v.add(b.getAppilcation());
+			v.add(b.getB_cnt()+"");
+			v.add(b.getL_cnt()+"");
+			rowData.add(v);
+		}
+		table.updateUI();
+	}
+	
+	public static void main(String[] args) {
+		new Board();
+	} 
 
+}
+;
