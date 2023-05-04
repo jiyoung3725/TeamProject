@@ -93,7 +93,7 @@ public class Qna_List extends JPanel {
 	public Qna_List(LayoutManager layout, boolean isDoubleBuffered) {
 		super(layout, isDoubleBuffered);
 		// TODO Auto-generated constructor stub
-	}
+	}  
 	public Qna_List(LayoutManager layout) {
 		super(layout);
 		// TODO Auto-generated constructor stub
@@ -121,7 +121,7 @@ public class Qna_List extends JPanel {
 		model1.addRow(rowData);
 	}
 		
-
+ 
 	public static void main(String[] args) {
 		new Qna_List();
 	}

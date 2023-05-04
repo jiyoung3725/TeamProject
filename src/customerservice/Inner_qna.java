@@ -21,7 +21,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import om.sist.dao.QnADAO;
-
+ 
 public class Inner_qna extends JPanel {
 	JComboBox<String> combo_b;
 	JTextField jtf_mail;
@@ -30,7 +30,7 @@ public class Inner_qna extends JPanel {
 	JTextArea jta_content;
 	JCheckBox check_b;
 	private Date inquiredate;
-
+ 
 	public Inner_qna() {
 		String[] combo = {"커뮤니티","쪽지함","게임"};
 		combo_b = new JComboBox<String>(combo);
@@ -51,7 +51,7 @@ public class Inner_qna extends JPanel {
 		p.add(new JLabel("이메일"));
 		p.add(jtf_mail);
 		add(p, BorderLayout.NORTH);
-		
+		 
 		JPanel p2 = new JPanel();
 		p2.add(new JLabel("제목"));
 		p2.add(jtf_title);

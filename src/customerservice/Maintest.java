@@ -17,7 +17,7 @@ public class Maintest extends JFrame {
 	JButton btn_search;
 	JButton btn_chat;
 	JTabbedPane pane;
-	JTabbedPane inner_pane;
+	JTabbedPane inner_pane; 
 	JTextField jtf_search;
 	Inner_qna tab01;
 	Qna_List tab02;
