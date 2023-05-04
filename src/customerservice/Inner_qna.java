@@ -20,6 +20,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import om.sist.dao.QnADAO;
+
 public class Inner_qna extends JPanel {
 	JComboBox<String> combo_b;
 	JTextField jtf_mail;
@@ -89,11 +91,8 @@ public class Inner_qna extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-			String q_type =(String)combo_b.getSelectedItem();
-			String q_title = jtf_title.getText();
-			Date inquirdate = new Date();
-			Qna_List qnalist = new Qna_List(1,q_type,q_title,inquirdate,"접수", null);
-			qnalist.addRowData(qnalist);
+			QnADAO dao = new QnADAO();
+		
 			}
 		});
 		

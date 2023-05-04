@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import com.sist.vo.QnAVO;
 
 import DB.ConnectionProvider;
+import customerservice.Inner_qna;
+import customerservice.Qna_List;
 
 public class QnADAO {
 
@@ -23,4 +25,7 @@ public class QnADAO {
 		}
 		return re;
 	}
+	
+
 }
+
