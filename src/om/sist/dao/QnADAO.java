@@ -3,7 +3,7 @@ package om.sist.dao;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.ArrayList;
-
+ 
 import com.sist.vo.QnAVO;
 
 import DB.ConnectionProvider;

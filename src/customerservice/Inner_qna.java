@@ -21,7 +21,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import om.sist.dao.QnADAO;
-
+ 
 public class Inner_qna extends JPanel {
 	JComboBox<String> combo_b;
 	JTextField jtf_mail;
