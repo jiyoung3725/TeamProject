@@ -1,12 +1,16 @@
 package boards;
 
 import javax.swing.*;
+
+import dao.ApplicationDAO;
+import vo.BoardVO;
+
 import java.awt.*;
 import java.awt.event.*;
-//ìˆ˜ì • ì˜ˆì •
+//¼öÁ¤ ¿¹Á¤
 public class Application extends JFrame implements ActionListener {
     JLabel title, content;
-    JTextArea contentTextArea;
+    JTextArea jta_application;
     JButton applyButton;
 
     public Application() {
@@ -14,28 +18,28 @@ public class Application extends JFrame implements ActionListener {
         Container c = getContentPane();
         c.setLayout(null);
 
-        // íƒ€ì´í‹€ ë ˆì´ë¸”
-        title = new JLabel("ì‹ ì²­í•˜ê¸°");
-        title.setFont(new Font("ë§‘ì€ ê³ ë”•", Font.BOLD, 30));
+        // Å¸ÀÌÆ² ·¹ÀÌºí
+        title = new JLabel("½ÅÃ»ÇÏ±â");
+        title.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 30));
         title.setBounds(20, 20, 120, 30);
         c.add(title);
 
-        // ì‹ ì²­ë‚´ìš© ë ˆì´ë¸”ê³¼ í•„ë“œ
-        content = new JLabel("ì‹ ì²­ë‚´ìš©");
-        content.setFont(new Font("ë§‘ì€ ê³ ë”•", Font.TRUETYPE_FONT, 12));
+        // ½ÅÃ»³»¿ë ·¹ÀÌºí°ú ÇÊµå
+        content = new JLabel("½ÅÃ»³»¿ë");
+        content.setFont(new Font("¸¼Àº °íµñ", Font.TRUETYPE_FONT, 12));
         content.setBounds(20, 70, 50, 30);
         c.add(content);
 
-        contentTextArea = new JTextArea();
-        contentTextArea.setBounds(20, 100, 440, 150);
-        c.add(contentTextArea);
+        jta_application = new JTextArea();
+        jta_application.setBounds(20, 100, 440, 150);
+        c.add(jta_application);
 
-        // ì‹ ì²­í•˜ê¸° ë²„íŠ¼
-        applyButton = new JButton("ì‹ ì²­í•˜ê¸°");
+        // ½ÅÃ»ÇÏ±â ¹öÆ°
+        applyButton = new JButton("½ÅÃ»ÇÏ±â");
         applyButton.setBounds(200, 280, 100, 30);
         c.add(applyButton);
         
-        setTitle("ì‹ ì²­í•˜ê¸°");
+        setTitle("½ÅÃ»ÇÏ±â");
         setSize(500, 380);
         setVisible(true);
         setLocationRelativeTo(null);
@@ -45,10 +49,13 @@ public class Application extends JFrame implements ActionListener {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String content = contentTextArea.getText();
-
-	            JOptionPane.showMessageDialog(null, "ì‹ ì²­ì´ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.");
-	            dispose();  // í¼ì„ ë‹«ìŠµë‹ˆë‹¤.
+				String content = jta_application.getText();
+				BoardVO vo = new BoardVO();
+				vo.setAp_content(content);
+				ApplicationDAO dao = new ApplicationDAO();
+				int re = dao.insertApplication(vo);
+	            JOptionPane.showMessageDialog(null, "½ÅÃ»ÀÌ ¿Ï·áµÇ¾ú½À´Ï´Ù.");
+	            dispose();  // ÆûÀ» ´İ½À´Ï´Ù.
 			}
 		});
     }

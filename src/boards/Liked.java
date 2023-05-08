@@ -1,10 +1,17 @@
 package boards;
 
 import javax.swing.*;
+
+import dao.BoardDAO;
+import dao.LikedDAO;
+import vo.BoardVO;
+
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Vector;
-//ìˆ˜ì • ì˜ˆì •
+//¼öÁ¤ ¿¹Á¤
 public class Liked extends JFrame implements ActionListener {
     JLabel title, content;
     JTable table;
@@ -19,28 +26,29 @@ public class Liked extends JFrame implements ActionListener {
         Container c = getContentPane();
         c.setLayout(null);
 
-        // íƒ€ì´í‹€ ë ˆì´ë¸”
-        title = new JLabel("ì¢‹ì•„ìš” ê²Œì‹œê¸€");
-        title.setFont(new Font("ë§‘ì€ ê³ ë”•", Font.BOLD, 30));
+        // Å¸ÀÌÆ² ·¹ÀÌºí
+        title = new JLabel("ÁÁ¾Æ¿ä °Ô½Ã±Û");
+        title.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 30));
         title.setBounds(150, 20, 300, 30);
         c.add(title);
 
-        // ì¢‹ì•„ìš” ëª©ë¡ í…Œì´ë¸”
+        // ÁÁ¾Æ¿ä ¸ñ·Ï Å×ÀÌºí
         colname = new Vector<String>();
-        colname.add("ë²ˆí˜¸");
-        colname.add("ìœ„ì¹˜");
-        colname.add("ì œëª©");
-        colname.add("ì¢‹ì•„ìš”ì¼");
+        colname.add("¹øÈ£");
+        colname.add("À§Ä¡");
+        colname.add("Á¦¸ñ");
+        colname.add("ÁÁ¾Æ¿äÀÏ");
         
         rowdata = new Vector<Vector<String>>();
         table = new JTable(rowdata,colname);
         JScrollPane jsp = new JScrollPane(table);
+        table.setRowHeight(30);
         
         jsp.setBounds(20, 80, 440, 230);
         c.add(jsp);
 
-
-        setTitle("ì¢‹ì•„ìš” ê²Œì‹œê¸€");
+        loadliked();
+        setTitle("ÁÁ¾Æ¿ä °Ô½Ã±Û");
         setSize(500, 380);
         setVisible(true);
         setLocationRelativeTo(null);
@@ -48,6 +56,20 @@ public class Liked extends JFrame implements ActionListener {
         
     }
 	
+    public void loadliked () {
+    	rowdata.clear();
+    	LikedDAO dao = new LikedDAO();
+    	ArrayList<BoardVO> list = dao.myLikedlist();
+    	for(BoardVO b:list) {
+    		Vector<String> v = new Vector<>();
+    		v.add(b.getNo()+"");
+    		v.add(b.getAddress());
+    		v.add(b.getTitle());
+    		v.add(b.getDate_board()+"");
+    		rowdata.add(v);
+    	}
+    	table.updateUI();
+    }
 	public static void main(String[] args) {
 		new Liked();
 	}
@@ -58,8 +80,4 @@ public class Liked extends JFrame implements ActionListener {
 		
 	}
 
-
-
-
 }
-;

@@ -1,63 +1,92 @@
 package boards;
 
 import javax.swing.*;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+
+import dao.ApplicationDAO;
+import dao.UserDAO;
+import vo.BoardVO;
+import vo.UserVO;
+
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Vector;
-//ìˆ˜ì • ì˜ˆì •
-public class Applicationlist extends JFrame implements ActionListener {
-    JLabel title, content;
+//¼öÁ¤ ¿¹Á¤
+public class Applicationlist extends JFrame {
+    JLabel title;
     JTable table;
     Vector<Vector<String>> rowdata;
     Vector<String> colname;
     
-    JTextArea contentTextArea;
-    JButton applyButton;
 
     public Applicationlist() {
-
+    	
         Container c = getContentPane();
         c.setLayout(null);
 
-        // íƒ€ì´í‹€ ë ˆì´ë¸”
-        title = new JLabel("ì‹ ì²­ ë¦¬ìŠ¤íŠ¸");
-        title.setFont(new Font("ë§‘ì€ ê³ ë”•", Font.BOLD, 30));
+        // Å¸ÀÌÆ² ·¹ÀÌºí
+        title = new JLabel("½ÅÃ» ¸®½ºÆ®");
+        title.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 30));
         title.setBounds(150, 20, 300, 30);
         c.add(title);
 
-        // ì¢‹ì•„ìš” ëª©ë¡ í…Œì´ë¸”
+        // ÁÁ¾Æ¿ä ¸ñ·Ï Å×ÀÌºí
         colname = new Vector<String>();
-        colname.add("ë²ˆí˜¸");
-        colname.add("ì‹ ì²­ì");
-        colname.add("ì—°ë½ì²˜");
-        colname.add("ì‹ ì²­ë‚´ìš©");
-        colname.add("ì‹ ì²­ë‚ ì§œ");
+        colname.add("¹øÈ£");
+        colname.add("½ÅÃ»ÀÚ");
+        colname.add("¼ºº°");
+        colname.add("½ÅÃ»³»¿ë");
+        colname.add("½ÅÃ»³¯Â¥");
         
         rowdata = new Vector<Vector<String>>();
         table = new JTable(rowdata,colname);
         JScrollPane jsp = new JScrollPane(table);
+        TableColumnModel columnModel = table.getColumnModel();
+		TableColumn column3 = columnModel.getColumn(3);
+		TableColumn column4 = columnModel.getColumn(4);
+		column3.setPreferredWidth(230);
+		column4.setPreferredWidth(100);
+        table.setRowHeight(30);
         
         jsp.setBounds(20, 80, 440, 230);
         c.add(jsp);
 
-
-        setTitle("ì‹ ì²­ ë¦¬ìŠ¤íŠ¸");
+        loadapplylist();
+        setTitle("½ÅÃ» ¸®½ºÆ®");
         setSize(500, 380);
         setVisible(true);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
+        
     }
-	
+	public void loadapplylist() {
+		rowdata.clear();
+		ApplicationDAO dao = new ApplicationDAO();
+		ArrayList<BoardVO> list = dao.applicationList();
+		for(BoardVO b :list) {
+			Vector<String> v = new Vector<>();
+			v.add(b.getNo()+"");
+			v.add(b.getName());
+			v.add(b.getGender());
+			v.add(b.getAp_content());
+			v.add(b.getDate_board()+"");
+			rowdata.add(v);
+	}
+		table.updateUI();
+		
+		
+	}
 	public static void main(String[] args) {
 		new Applicationlist();
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 
 
