@@ -3,7 +3,6 @@ package vo;
 import java.sql.Date;
 
 public class BoardVO {
-	private int no = 0;
 	private int b_no = 0;
 	private String address;
 	private String category = "";
@@ -21,11 +20,10 @@ public class BoardVO {
 	public BoardVO() {
 		super();
 	}
-	public BoardVO(int no, int b_no, String address, String category, String interest, String title, String b_content,
+	public BoardVO(int b_no, String address, String category, String interest, String title, String b_content,
 			Date date_board, String appilcation, int b_cnt, int l_cnt, String ap_content, String name, String phone,
 			String gender) {
 		super();
-		this.no = no;
 		this.b_no = b_no;
 		this.address = address;
 		this.category = category;
@@ -40,12 +38,6 @@ public class BoardVO {
 		this.name = name;
 		this.phone = phone;
 		this.gender = gender;
-	}
-	public int getNo() {
-		return no;
-	}
-	public void setNo(int no) {
-		this.no = no;
 	}
 	public int getB_no() {
 		return b_no;
@@ -131,4 +123,5 @@ public class BoardVO {
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
+	
 }
