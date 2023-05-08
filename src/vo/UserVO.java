@@ -3,16 +3,16 @@ package vo;
 import java.util.Date;
 
 public class UserVO {
-	int no;
-	String id="";
-	String pwd="";
-	String name="";
-	String jumin="";
-	String email="";
-	String interest="";
-	Date update;
-	String phone="";
-	String address="";
+	private int no;
+	private String id="";
+	private String pwd="";
+	private String name="";
+	private String jumin="";
+	private String email="";
+	private String interest="";
+	private Date update;
+	private String phone="";
+	private String address="";
 	public UserVO(int no, String id, String pwd, String name, String jumin, String email, String interest, Date update,
 			String phone, String address) {
 		super();
