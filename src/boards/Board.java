@@ -1,11 +1,13 @@
 package boards;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -15,22 +17,25 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableRowSorter;
 
 import dao.BoardDAO;
 import vo.BoardVO;
-//¼öÁ¤ ¿¹Á¤
+//ìˆ˜ì • ì˜ˆì •
 public class Board extends JFrame {
 	JTextField jtf_search;
-	JComboBox<String> jcb_option;	//°°ÀÌÇØ¿ä, ¿ì¸®µ¿³× ¼±ÅÃ
-	String []interest = {"°Ç°­/¿îµ¿","À½½Ä/¿ä¸®","¿µÈ­/°ø¿¬/Àü½Ã","¹Ì¼ú/°ø¿¹","³ë·¡/À½¾Ç","ÀçÅ×Å©","±âÅ¸"};
+	JComboBox<String> jcb_option;	//ê°™ì´í•´ìš”, ìš°ë¦¬ë™ë„¤ ì„ íƒ
+	String []interest = {"ê±´ê°•/ìš´ë™","ìŒì‹/ìš”ë¦¬","ì˜í™”/ê³µì—°/ì „ì‹œ","ë¯¸ìˆ /ê³µì˜ˆ","ë…¸ë˜/ìŒì•…","ì¬í…Œí¬","ê¸°íƒ€"};
 	JCheckBox []jcb = new JCheckBox[interest.length];
 	JTable table;
 	Vector<String> colNames;
@@ -40,14 +45,14 @@ public class Board extends JFrame {
 	ArrayList<BoardVO> list;
 		
 	public Board() {
-		JPanel p_main = new JPanel();	//°Ô½ÃÆÇ ¸ŞÀÎ È­¸é
+		JPanel p_main = new JPanel();	//ê²Œì‹œíŒ ë©”ì¸ í™”ë©´
 		p_main.setLayout(new BorderLayout());
-		JPanel p_search1 = new JPanel();	//°Ë»öÃ¢ ÀüÃ¼ ÆĞ³Î
-		JPanel p_search2 = new JPanel();	//°Ë»öÃ¢ »ó´Ü
-		JPanel p_search3 = new JPanel();	//°Ë»öÃ¢ ÇÏ´Ü
-		JPanel p_interest = new JPanel();	//°ü½É»ç °Ë»ö ÆĞ³Î
+		JPanel p_search1 = new JPanel();	//ê²€ìƒ‰ì°½ ì „ì²´ íŒ¨ë„
+		JPanel p_search2 = new JPanel();	//ê²€ìƒ‰ì°½ ìƒë‹¨
+		JPanel p_search3 = new JPanel();	//ê²€ìƒ‰ì°½ í•˜ë‹¨
+		JPanel p_interest = new JPanel();	//ê´€ì‹¬ì‚¬ ê²€ìƒ‰ íŒ¨ë„
 		p_interest.setLayout(new GridLayout(7,1));
-		JPanel p_etc = new JPanel();	//±Û¾²±â, ÆäÀÌÁö ³Ñ±è
+		JPanel p_etc = new JPanel();	//ê¸€ì“°ê¸°, í˜ì´ì§€ ë„˜ê¹€
 		p_etc.setLayout(new GridLayout(1,3));
 		JPanel p_etc1 = new JPanel();
 		JPanel p_etc2 = new JPanel();
@@ -58,14 +63,14 @@ public class Board extends JFrame {
 		
 		p_search1.setLayout(new GridLayout(3,1));
 		jcb_option = new JComboBox<String>();
-		jcb_option.addItem("ÇÔ²²ÇØ¿ä");
-		jcb_option.addItem("µ¿³×»ıÈ°");
+		jcb_option.addItem("í•¨ê»˜í•´ìš”");
+		jcb_option.addItem("ë™ë„¤ìƒí™œ");
 		
 		jtf_search = new JTextField(20);
-		JButton btn_search = new JButton("°Ë»ö");
-		JButton btn_clear = new JButton("ÃÊ±âÈ­");
-		jrb_option1 = new JRadioButton("ÀÎ±â¼ø") ;	//ÀÎ±â¼ø Á¤·Ä
-		jrb_option2 = new JRadioButton("ÃÖ½Å¼ø");	//ÃÖ½Å¼ø Á¤·Ä
+		JButton btn_search = new JButton("ê²€ìƒ‰");
+		JButton btn_clear = new JButton("ì´ˆê¸°í™”");
+		jrb_option1 = new JRadioButton("ì¸ê¸°ìˆœ") ;	//ì¸ê¸°ìˆœ ì •ë ¬
+		jrb_option2 = new JRadioButton("ìµœì‹ ìˆœ");	//ìµœì‹ ìˆœ ì •ë ¬
 		ButtonGroup bg = new ButtonGroup();
 		bg.add(jrb_option1);
 		bg.add(jrb_option2);
@@ -81,35 +86,39 @@ public class Board extends JFrame {
 		
 		p_main.add(p_search1, BorderLayout.NORTH);
 	
-		//Ã¼Å©¹Ú½º ¼±ÅÃÇÏ¿© °ü½É»çº° ¸ñ·Ï ±¸¼º (±â´É±¸ÇöX)
+		//ì²´í¬ë°•ìŠ¤ ì„ íƒí•˜ì—¬ ê´€ì‹¬ì‚¬ë³„ ëª©ë¡ êµ¬ì„± (ê¸°ëŠ¥êµ¬í˜„X)
 		for(int i=0; i<jcb.length ; i++) {
 			jcb[i] = new JCheckBox(interest[i]);
 			p_interest.add(jcb[i]);
 			
 			jcb[i].addActionListener(new ActionListener() {
-				ArrayList<String> Interests = new ArrayList<>();
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					
-					 Interests.clear(); 
-					for(int j = 0; j < jcb.length; j++) {
-						if(jcb[j].isSelected()) {
-							Interests.add(jcb[j].getText());
-						}
-					}
-					
-					BoardDAO dao = new BoardDAO();
-					ArrayList<BoardVO> list = dao.interestList(Interests);
-					// DefaultTableModel °´Ã¼ »ı¼º
-					DefaultTableModel model = (DefaultTableModel) table.getModel();
-					model.setRowCount(0);
-					for (BoardVO vo : list) {
-			            model.addRow(new Object[]{vo.getNo(), vo.getAddress(), vo.getCategory(), vo.getInterest(), vo.getTitle(), vo.getDate_board(), 
-			            		vo.getAppilcation(), vo.getB_cnt(), vo.getL_cnt()});
-			           
+			    @Override
+			    public void actionPerformed(ActionEvent e) {
+			        rowData.clear();
+			        String data = "";
+			        for (int j = 0; j < jcb.length; j++) {
+			            if (jcb[j].isSelected() == true) {
+			                data += jcb[j].getText();
+			            }
 			        }
-					table.updateUI();
-				}
+
+			        BoardDAO dao = new BoardDAO();
+			        ArrayList<BoardVO> list = dao.interestList(data);
+			        for (BoardVO b : list) {
+			            Vector<String> v = new Vector<>();
+			            v.add(b.getNo() + "");
+			            v.add(b.getAddress());
+			            v.add(b.getCategory());
+			            v.add(b.getInterest());
+			            v.add(b.getTitle());
+			            v.add(b.getDate_board() + "");
+			            v.add(b.getAppilcation());
+			            v.add(b.getB_cnt() + "");
+			            v.add(b.getL_cnt() + "");
+			            rowData.add(v);
+			        }
+			        table.updateUI();
+			    }
 			});
 		}
 		p_main.add(p_interest, BorderLayout.WEST);
@@ -117,34 +126,38 @@ public class Board extends JFrame {
 		colNames = new Vector<String>();
 		rowData = new Vector<Vector<String>>();
 		
-		colNames.add("¹øÈ£");
-		colNames.add("À§Ä¡");
-		colNames.add("Ä«Å×°í¸®");
-		colNames.add("°ü½É»ç");
-		colNames.add("Á¦¸ñ");
-		colNames.add("ÀÛ¼º³¯Â¥");
-		colNames.add("¸ğÁı¿©ºÎ");
-		colNames.add("Á¶È¸¼ö");
-		colNames.add("¢¾");
+		colNames.add("ë²ˆí˜¸");
+		colNames.add("ìœ„ì¹˜");
+		colNames.add("ì¹´í…Œê³ ë¦¬");
+		colNames.add("ê´€ì‹¬ì‚¬");
+		colNames.add("ì œëª©");
+		colNames.add("ì‘ì„±ë‚ ì§œ");
+		colNames.add("ëª¨ì§‘ì—¬ë¶€");
+		colNames.add("ì¡°íšŒìˆ˜");
+		colNames.add("â™¥");
 		table = new JTable(rowData, colNames);
 		JScrollPane jsp = new JScrollPane(table);
 		TableColumnModel columnModel = table.getColumnModel();
+		
+		TableColumn column3 = columnModel.getColumn(3);
 		TableColumn column4 = columnModel.getColumn(4);
 		TableColumn column5 = columnModel.getColumn(5);
+		
+		column3.setPreferredWidth(100);
 		column4.setPreferredWidth(350);
 		column5.setPreferredWidth(110);
 		table.revalidate();
 		table.setRowHeight(35);
 		p_main.add(jsp, BorderLayout.CENTER);
 		
-		JButton btn_pre = new JButton("ÀÌÀü");
-		JLabel jlb_page = new JLabel("page");	//page ¹øÈ£¿¡ µû¶ó ¹Ù²îµµ·Ï ¼öÁ¤ ¿¹Á¤
-		JButton btn_post = new JButton("´ÙÀ½");
+		JButton btn_pre = new JButton("ì´ì „");
+		JLabel jlb_page = new JLabel("page");	//page ë²ˆí˜¸ì— ë”°ë¼ ë°”ë€Œë„ë¡ ìˆ˜ì • ì˜ˆì •
+		JButton btn_post = new JButton("ë‹¤ìŒ");
 		p_etc2.add(btn_pre);
 		p_etc2.add(jlb_page);
 		p_etc2.add(btn_post);
 		
-		JButton btn_write = new JButton("°Ô½Ã±Û ÀÛ¼º");
+		JButton btn_write = new JButton("ê²Œì‹œê¸€ ì‘ì„±");
 		p_etc3.add(btn_write);
 		p_main.add(p_etc, BorderLayout.SOUTH);
 		add(p_main);
@@ -153,19 +166,19 @@ public class Board extends JFrame {
 		setSize(800, 700);
 		 setLocationRelativeTo(null);
 		setVisible(true);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		// °Ô½Ã±Û ÀÛ¼º ¹öÆ°
+		// ê²Œì‹œê¸€ ì‘ì„± ë²„íŠ¼
 		btn_write.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				WriteBoard writepage = new WriteBoard();
 				writepage.setVisible(true);
-				
 			}
 		});
 		
-		// ÃÊ±âÈ­ ¹öÆ° 
+		// ì´ˆê¸°í™” ë²„íŠ¼ 
 		btn_clear.addActionListener(new ActionListener() {
 			
 			@Override
@@ -174,7 +187,7 @@ public class Board extends JFrame {
 				
 			}
 		});
-		// °Ë»ö ÀÌº¥Æ® ¼³Á¤
+		// ê²€ìƒ‰ ì´ë²¤íŠ¸ ì„¤ì •
 		btn_search.addActionListener(new ActionListener() {
 			
 			@Override
@@ -183,7 +196,12 @@ public class Board extends JFrame {
 				BoardDAO dao = new BoardDAO();
 				String search = jtf_search.getText();
 				
+				if (jrb_option2.isSelected()) {
 				ArrayList<BoardVO> list = dao.dateSearchList(search);
+				
+				if (jrb_option1.isSelected()) {
+					ArrayList<BoardVO> list2 = dao.likedSearchList(search);
+				}
 				for( BoardVO b :list) {
 					Vector<String> v = new Vector<>();
 					v.add(b.getNo()+"");
@@ -198,10 +216,11 @@ public class Board extends JFrame {
 					rowData.add(v);
 				}
 				table.updateUI();
+				}
 			}
 		});
 		
-		//¶óµğ¿À ¹öÆ° ÀÎ±â¼ø Á¤·Ä
+		//ë¼ë””ì˜¤ ë²„íŠ¼ ì¸ê¸°ìˆœ ì •ë ¬
 		jrb_option1.addActionListener(new ActionListener() {
 			
 			@Override
@@ -229,7 +248,7 @@ public class Board extends JFrame {
 			}
 		});
 		
-		//¶óµğ¿À ¹öÆ° ÃÖ½Å¼ø Á¤·Ä
+		//ë¼ë””ì˜¤ ë²„íŠ¼ ìµœì‹ ìˆœ ì •ë ¬
 		jrb_option2.addActionListener(new ActionListener() {
 			
 			@Override
@@ -257,7 +276,7 @@ public class Board extends JFrame {
 			}
 		});
 		
-		// ±ÛÀ» ´õºíÅ¬¸¯ ½Ã »ó¼¼ÆäÀÌÁö·Î ¿¬°á
+		// ê¸€ì„ ë”ë¸”í´ë¦­ ì‹œ ìƒì„¸í˜ì´ì§€ë¡œ ì—°ê²°
 		table.addMouseListener(new MouseListener() {
 			
 			@Override
@@ -265,7 +284,7 @@ public class Board extends JFrame {
 			}
 			@Override
 			public void mousePressed(MouseEvent e) {
-// »ó¼¼ÆäÀÌÁö·Î ¿¬°á ¿¹Á¤
+// ìƒì„¸í˜ì´ì§€ë¡œ ì—°ê²° ì˜ˆì •
 				if(e.getClickCount() == 2 ) {
 				int row = table.getSelectedRow();
 //				BoardVO b = list.get(row);
@@ -295,7 +314,7 @@ public class Board extends JFrame {
 		
 		for( BoardVO b :list) {
 			Vector<String> v = new Vector<>();
-			v.add(b.getNo()+"");
+			v.add(b.getB_no()+"");
 			v.add(b.getAddress());
 			v.add(b.getCategory());
 			v.add(b.getInterest());
