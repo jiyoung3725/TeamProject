@@ -22,7 +22,7 @@ public class ApplicationDAO {
 			String sql = "insert into application (ap_no, ap_content, date_application, b_no, user_no) "
 					+ "values (seq_application.nextval, ?,sysdate,?,?)";
 			
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, b.getAp_content());
 			pstmt.setInt(2, b.getNo());
@@ -41,7 +41,7 @@ public class ApplicationDAO {
 		try {
 			String sql = "select count(ap_no) from application a, board b where a.b_no=b.b_no and b.b_no = ?";
 			
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, b.getNo());
 			ResultSet rs = pstmt.executeQuery();
@@ -69,7 +69,7 @@ public class ApplicationDAO {
 						+ "and a.user_no <> 2 and u.user_no = 2 "
 						+ "order by date_application desc) a where rownum <=10";
 				
-				Connection conn = ConnectionProvider.getConnecton();
+				Connection conn = ConnectionProvider.getConnection();
 				Statement pstmt = conn.createStatement();
 //				PreparedStatement pstmt = conn.prepareStatement(sql);
 //				pstmt.setInt(1, LogInPage.NO);

@@ -20,7 +20,7 @@ public class QnaDAO {
 		ArrayList<QnAVo> list = new ArrayList<QnAVo>();
 		String sql = "select q_title, q_ content from qna where q_title like '%?%' and q_content like '%?%'";
 		try {
-		Connection conn = ConnectionProvider.getConnecton();
+		Connection conn = ConnectionProvider.getConnection();
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		pstmt.setString(1, q_title);
 		pstmt.setString(2, q_content);
@@ -44,7 +44,7 @@ public class QnaDAO {
 		int re = -1;
 		String sql = "update qna set q_status='답변완료' where q_no = ?";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, no);
 			re = pstmt.executeUpdate();
@@ -61,7 +61,7 @@ public class QnaDAO {
 			ArrayList<QnAVo> list = new ArrayList<QnAVo>();
 			String sql = "select a_content from answer where q_no=?";
 			try {
-				Connection conn = ConnectionProvider.getConnecton();
+				Connection conn = ConnectionProvider.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql);
 				pstmt.setInt(1, q_no);
 				ResultSet rs = pstmt.executeQuery();
@@ -83,7 +83,7 @@ public class QnaDAO {
 			int re = -1;
 			String sql = "update answer set a_date = default, a_content = ? where q_no = ? and user_no = 0 ";
 			try {
-				Connection conn = ConnectionProvider.getConnecton();
+				Connection conn = ConnectionProvider.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, a_content);
 				pstmt.setInt(2, q_no);
@@ -100,7 +100,7 @@ public class QnaDAO {
 			int re = -1;
 			String sql = "insert into answer values((SELECT NVL( MAX(a_no), 0) + 1 FROM answer ),(select max(q_no) from qna),null,null)";
 			try {
-				Connection conn = ConnectionProvider.getConnecton();
+				Connection conn = ConnectionProvider.getConnection();
 				Statement stmt = conn.createStatement();
 				re = stmt.executeUpdate(sql);
 				ConnectionProvider.close(stmt, conn);
@@ -115,7 +115,7 @@ public class QnaDAO {
 		String sql ="insert into qna values(( SELECT NVL( MAX(q_no) , 0) + 1 FROM qna ),?,?,?,?,null,default,default,3)";
 		int count =-1;
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, q_type);
 			pstmt.setString(2, q_mail);
@@ -137,7 +137,7 @@ public class QnaDAO {
 		ArrayList<QnAVo> list = new ArrayList<QnAVo>();
 		String sql = "select q.q_no,q_type, q_title, q_inquirdate, q_status, a.a_date from qna q, answer a where q.q_no = a.q_no order by q.q_no";
 		try{
-			Connection conn = db.ConnectionProvider.getConnecton();
+			Connection conn = db.ConnectionProvider.getConnection();
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			while(rs.next()) {

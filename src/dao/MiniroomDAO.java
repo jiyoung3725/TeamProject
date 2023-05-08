@@ -1,5 +1,6 @@
 package dao;
 
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,7 +17,7 @@ public class MiniroomDAO {
 				+ "(select b_no,title,address from user_info u, board b where u.user_no=b.user_no) a, user_info u "
 				+ "where a.address=u.address and u.user_no=?";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, NO);
 			ResultSet rs = pstmt.executeQuery();
@@ -37,7 +38,7 @@ public class MiniroomDAO {
 				+ "where u.interest=b.interest and u.user_no=?" + 
 				"";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, NO);
 			ResultSet rs = pstmt.executeQuery();
@@ -56,7 +57,7 @@ public class MiniroomDAO {
 		String sql = "select decode(substr(jumin,7,1),1,'³²',3,'³²','¿©') from user_info where user_no=?";
 		String result = "";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, NO);
 			ResultSet rs = pstmt.executeQuery();
@@ -75,7 +76,7 @@ public class MiniroomDAO {
 		String sql = "select m_title from miniroom where user_no=?";
 		String result = "";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, NO);
 			ResultSet rs = pstmt.executeQuery();
@@ -93,7 +94,7 @@ public class MiniroomDAO {
 		String sql = "select m_content from miniroom where user_no=?";
 		String result = "";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, NO);
 			ResultSet rs = pstmt.executeQuery();
@@ -111,7 +112,7 @@ public class MiniroomDAO {
 		String sql = "select m_image from miniroom where user_no=?";
 		String result = "";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, NO);
 			ResultSet rs = pstmt.executeQuery();
@@ -129,7 +130,7 @@ public class MiniroomDAO {
 		String sql = "select m_likes from miniroom where user_no=?";
 		int result = -1;
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, NO);
 			ResultSet rs = pstmt.executeQuery();
@@ -147,7 +148,7 @@ public class MiniroomDAO {
 		String sql = "update miniroom set m_likes = m_likes+1 where user_no=?";
 		int re = -1;
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, NO);
 			re = pstmt.executeUpdate();
@@ -162,7 +163,7 @@ public class MiniroomDAO {
 		String sql = "update miniroom set m_title=? where user_no = ?";
 		int re = -1;
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, title);
 			pstmt.setInt(2, NO);
@@ -178,7 +179,7 @@ public class MiniroomDAO {
 		String sql = "update miniroom set m_content=? where user_no = ?";
 		int re = -1;
 		try { 
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, content);
 			pstmt.setInt(2, NO);
@@ -194,7 +195,7 @@ public class MiniroomDAO {
 		String sql = "update miniroom set m_image=? where user_no = ?";
 		int re = -1;
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, MImg);
 			pstmt.setInt(2, NO);
@@ -210,7 +211,7 @@ public class MiniroomDAO {
 		int re = -1;
 		String sql = "update miniroom set char_x=?, char_y=? where user_no = ?";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, x);
 			pstmt.setInt(2, y);
@@ -225,7 +226,7 @@ public class MiniroomDAO {
 		int[] arr = new int[2];
 		String sql = "select char_x, char_y from miniroom where user_no=?";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, NO);
 			ResultSet rs = pstmt.executeQuery();

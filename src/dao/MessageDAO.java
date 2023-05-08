@@ -18,7 +18,7 @@ public class MessageDAO {
 				+ "from messages m, user_info u "
 				+ "where u.user_no=m.recipient_no and recipient_no=? order by date_sent desc";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, recipient_no);
 			ResultSet rs = pstmt.executeQuery();
@@ -45,7 +45,7 @@ public class MessageDAO {
 				+ "(select user_name from user_info where user_no=sender_no) sender_name,m_no, recipient_no, sender_no \r\n" + 
 				"from messages m, user_info u where u.user_no=m.recipient_no and sender_no=? order by date_sent desc";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, recipient_no);
 			ResultSet rs = pstmt.executeQuery();
@@ -72,7 +72,7 @@ public class MessageDAO {
 		int re = -1;
 		String sql = "insert into messages values(seq_msg.NEXTVAL, ?, sysdate, 'N', ?,?)";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, m.getContent());
 			pstmt.setInt(2, m.getSender_no());
@@ -88,7 +88,7 @@ public class MessageDAO {
 		int re = -1;
 		String sql = "update messages set m_state = 'Y' where m_no=?";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, m.getM_no());
 			re = pstmt.executeUpdate();
@@ -102,7 +102,7 @@ public class MessageDAO {
 		int re = -1;
 		String sql = "delete from messages where m_no=?";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, m_no);
 			re = pstmt.executeUpdate();

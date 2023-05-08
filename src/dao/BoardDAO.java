@@ -26,7 +26,7 @@ public class BoardDAO {
 					+ "group by u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
 					+ "order by u.address, u.interest, date_board desc) a where rownum between ? and ?";
 			
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, start);
 			pstmt.setInt(2, end);
@@ -72,7 +72,7 @@ public class BoardDAO {
 					+ "group by  u.user_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
 					+ "order by nvl(count(l.l_no), 0) desc, date_board desc) a where rownum <=10";
 			
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			
@@ -115,7 +115,7 @@ public class BoardDAO {
 					+ "group by  u.user_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
 					+ "order by date_board desc) a where rownum <=10";
 			
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			
@@ -160,7 +160,7 @@ public class BoardDAO {
 					+ "group by u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
 					+ "order by u.interest, date_board desc) a where rownum <=10";
 			
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, "%"+search+"%");
 			ResultSet rs = pstmt.executeQuery();
@@ -206,7 +206,7 @@ public class BoardDAO {
 					+ "group by u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
 					+ "order by nvl(count(l.l_no), 0) desc, date_board desc) a where rownum <=10";
 			
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, "%"+search+"%");
 			ResultSet rs = pstmt.executeQuery();
@@ -251,7 +251,7 @@ public class BoardDAO {
 					+ "group by u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
 					+ "order by date_board desc) a where rownum <=10";
 			
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, "%"+search+"%");
 			ResultSet rs = pstmt.executeQuery();
@@ -296,7 +296,7 @@ public class BoardDAO {
 					+ "group by u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
 					+ "order by date_board desc) a where rownum <=10";
 			
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, "%"+search+"%");
 			pstmt.setString(2, addr);
@@ -342,7 +342,7 @@ public class BoardDAO {
 					+ "group by u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
 					+ "order by date_board desc) a where rownum <=10";
 			
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, "%"+interests+"%");
 			
@@ -389,7 +389,7 @@ public class BoardDAO {
 					+ "group by u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
 					+ "order by date_board desc) a where rownum <=10";
 			
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, "%"+search+"%");
 			pstmt.setString(2, categorys);
@@ -438,7 +438,7 @@ public class BoardDAO {
 					+ "order by nvl(count(l.l_no), 0) desc, date_board desc) a where rownum <=10";
 			
 		
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, "%"+search+"%");
 			pstmt.setString(2, categorys);

@@ -16,7 +16,7 @@ public class UserDAO {
 		String sql = "select user_pwd from user_info where user_id = ?";
 		String result = "";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, ID);
 			ResultSet rs = pstmt.executeQuery();
@@ -34,7 +34,7 @@ public class UserDAO {
 		UserVO u = new UserVO();
 		String sql = "select * from user_info where user_no = "+NO;
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			if(rs.next()) {
@@ -59,7 +59,7 @@ public class UserDAO {
 		int re = -1;
 		String sql = "select user_no from user_info where user_id = ?";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, ID);
 			ResultSet rs = pstmt.executeQuery();
@@ -76,7 +76,7 @@ public class UserDAO {
 		String name = "";
 		String sql = "select user_name from user_info where user_id = ?";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, ID);
 			ResultSet rs = pstmt.executeQuery();
@@ -93,7 +93,7 @@ public class UserDAO {
 		String name = "";
 		String sql = "select user_id from user_info where user_no = ?";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, NO);
 			ResultSet rs = pstmt.executeQuery();
@@ -110,7 +110,7 @@ public class UserDAO {
 		int re = -1;
 		String sql = "insert into user_info values(seq_uno.nextval, ?, ?, ?, ?, ?, ?, sysdate, ?, ?)";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, u.getId());
 			pstmt.setString(2, u.getPwd());
@@ -132,7 +132,7 @@ public class UserDAO {
 		int re = -1;
 		String sql = "select nvl(count(*),0) from user_info where user_id = ?";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, ID);
 			ResultSet rs = pstmt.executeQuery();
@@ -149,7 +149,7 @@ public class UserDAO {
 		int re = -1;
 		String sql = "update user_info set user_pwd=? where user_no=?";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, PWD);
 			pstmt.setInt(2, NO);
@@ -164,7 +164,7 @@ public class UserDAO {
 		int re = -1;
 		String sql = "update user_info set email=? where user_no=?";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, email);
 			pstmt.setInt(2, NO);
@@ -179,7 +179,7 @@ public class UserDAO {
 		int re = -1;
 		String sql = "update user_info set interest=? where user_no=?";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, interest);
 			pstmt.setInt(2, NO);
@@ -194,7 +194,7 @@ public class UserDAO {
 		int re = -1;
 		String sql = "update user_info set phone=? where user_no=?";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, phone);
 			pstmt.setInt(2, NO);
@@ -209,7 +209,7 @@ public class UserDAO {
 		int re = -1;
 		String sql = "update user_info set address=? where user_no=?";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, address);
 			pstmt.setInt(2, NO);

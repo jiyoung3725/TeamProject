@@ -19,7 +19,7 @@ public class AdminDAO {
 				+ "r.b_no, nvl(title, '삭제 완료'), nvl(b_content,'삭제 완료') "
 				+ "from reports r left outer join board b on r.b_no=b.b_no";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			while(rs.next()) {
@@ -44,7 +44,7 @@ public class AdminDAO {
 		int re = -1;
 		String sql = "update reports set r_state='Y' where r_no=?";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, r_no);
 			re = pstmt.executeUpdate();
@@ -61,7 +61,7 @@ public class AdminDAO {
 				+ "where r.b_no=b.b_no group by b.user_no) a " + 
 				"on a.r_uno=user_no where user_no <> 0 order by nvl(r_cnt,0) desc";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			while(rs.next()) {
@@ -82,7 +82,7 @@ public class AdminDAO {
 		int re = -1;
 		String sql = "delete from user_info where user_no=?";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, NO);
 			re = pstmt.executeUpdate();

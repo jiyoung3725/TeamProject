@@ -20,7 +20,7 @@ public class LikedDAO {
 		try {
 			String sql = "insert into liked (l_no, date_liked, b_no, user_no) values (seq_liked.nextval, sysdate, ?, ?)";
 			
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, b.getNo());
 			pstmt.setInt(2, LogInPage.getNO());
@@ -38,7 +38,7 @@ public class LikedDAO {
 		try {
 			String sql = "select count(l_no) from liked l, board b where l.b_no = b.b_no and b.b_no = ?";
 			
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, b.getNo());
 			ResultSet rs = pstmt.executeQuery();
@@ -61,7 +61,7 @@ public class LikedDAO {
 				String sql = "select a.* from (select l.l_no, u.address, b.title, l.date_liked from board b, liked l, user_info u  "
 						+ "where u.user_no= l.user_no and l.b_no = b.b_no and l.user_no = 2 order by date_liked desc) a where rownum <=5";
 				
-				Connection conn = ConnectionProvider.getConnecton();
+				Connection conn = ConnectionProvider.getConnection();
 				Statement pstmt = conn.createStatement();
 				ResultSet rs = pstmt.executeQuery(sql);
 				

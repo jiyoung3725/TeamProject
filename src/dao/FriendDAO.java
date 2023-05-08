@@ -18,7 +18,7 @@ public class FriendDAO {
 				+ "where user_no1 = user_no and user_no2=? and f_state = 'Y' union select user_name, user_id "
 				+ "from user_info, friend where user_no2=user_no and user_no1=? and f_state = 'Y'";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, NO);
 			pstmt.setInt(2, NO);
@@ -37,7 +37,7 @@ public class FriendDAO {
 				+ "where user_no1 = user_no and user_no2=? and wait_no = ? and f_state = 'N' union select user_name, user_id "
 				+ "from user_info, friend where user_no2=user_no and user_no1=? and wait_no = ? and f_state = 'N'";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, NO);
 			pstmt.setInt(2, NO);
@@ -56,7 +56,7 @@ public class FriendDAO {
 		int re = -1;
 		String sql = "update friend set f_state = 'Y' where user_no1 = ? and user_no2 = ? ";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			System.out.println(u_no +" "+ f_no);
 			pstmt.setInt(1, Math.min(u_no, f_no));	// 데이터의 중복을 줄이기 위해, user_no1<user_no2가 되도록 처리
@@ -71,7 +71,7 @@ public class FriendDAO {
 		int re = -1;
 		String sql = "delete from friend where user_no1 = ? and user_no2=?";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, Math.min(u_no, f_no));	// 데이터의 중복을 줄이기 위해, user_no1<user_no2가 되도록 처리
 			pstmt.setInt(2, Math.max(u_no, f_no));
@@ -89,7 +89,7 @@ public class FriendDAO {
 				+ "case when "+u_no+"<"+f_no+" then "+f_no+" else "+u_no+" end, "
 				+ "'N', "+u_no+", "+f_no+")";
 		try {
-			Connection conn = ConnectionProvider.getConnecton();
+			Connection conn = ConnectionProvider.getConnection();
 			Statement stmt = conn.createStatement();
 			re = stmt.executeUpdate(sql);
 			ConnectionProvider.close(stmt, conn);
