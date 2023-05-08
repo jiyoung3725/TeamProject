@@ -15,7 +15,7 @@ import vo.UserVO;
 
 public class ApplicationDAO {
 
-	//»ç¿ëÀÚ°¡ ½ÅÃ»¶õ¿¡¼­ ½ÅÃ»³»¿ëÀ» ÀÛ¼ºÇÏ´Â Äõ¸®
+	//ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Û¼ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½
 	public int insertApplication(BoardVO b) {
 		int re = -1;
 		try {
@@ -25,17 +25,17 @@ public class ApplicationDAO {
 			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, b.getAp_content());
-			pstmt.setInt(2, b.getNo());
+			pstmt.setInt(2, b.getB_no());
 			pstmt.setInt(3, LogInPage.getNO());
 			re = pstmt.executeUpdate();
 			ConnectionProvider.close(pstmt, conn);
 		} catch (Exception e) {
-			System.out.println("¿¹¿Ü¹ß»ý : " +e.getMessage());
+			System.out.println("ï¿½ï¿½ï¿½Ü¹ß»ï¿½ : " +e.getMessage());
 		}
 		return re;
 	}
 	
-	//½ÅÃ» ¼ö Äõ¸®
+	//ï¿½ï¿½Ã» ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	public ArrayList<BoardVO> countApplication(BoardVO b) {
 			ArrayList<BoardVO> list = new ArrayList<>();
 		try {
@@ -43,26 +43,26 @@ public class ApplicationDAO {
 			
 			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, b.getNo());
+			pstmt.setInt(1, b.getB_no());
 			ResultSet rs = pstmt.executeQuery();
 			
 			if(rs.next()) {
-				int count = rs.getInt(1);
 				BoardVO v = new BoardVO();
-				v.setNo(rs.getInt(1));
+				v.setB_no(rs.getInt(1));
+				
 			}
 			ConnectionProvider.close(pstmt, conn);
 		} catch (Exception e) {
-			System.out.println("¿¹¿Ü¹ß»ý : " +e.getMessage());
+			System.out.println("ï¿½ï¿½ï¿½Ü¹ß»ï¿½ : " +e.getMessage());
 		}
 		return list;
 	}
-	//ÀÛ¼ºÀÚ ½ÅÃ»Á¤º¸ Á¶È¸
+	//ï¿½Û¼ï¿½ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¸
 		public ArrayList<BoardVO> applicationList() {
 				ArrayList<BoardVO> list = new ArrayList<>();
 			try {
 				String sql = "select a.* from "
-						+ "(select distinct u.user_no, u.user_name, decode(substr(jumin,8,1),1,'³²',2,'¿©',3,'³²',4,'¿©') gender, "
+						+ "(select distinct u.user_no, u.user_name, decode(substr(jumin,8,1),1,'ï¿½ï¿½',2,'ï¿½ï¿½',3,'ï¿½ï¿½',4,'ï¿½ï¿½') gender, "
 						+ "a.ap_content, a.date_application "
 						+ "from board b, user_info u, application a "
 						+ "where b.b_no=a.b_no and u.user_no=b.user_no "
@@ -78,14 +78,8 @@ public class ApplicationDAO {
 				ResultSet rs = pstmt.executeQuery(sql);
 				
 				while(rs.next()) {
-					int ap_no = rs.getInt(1);
-					String name = rs.getString(2);
-					String gender = rs.getString(3);
-					String ap_contents = rs.getString(4);
-					Date date_application = rs.getDate(5);
-					
 					BoardVO v = new BoardVO();
-					v.setNo(rs.getInt(1));
+					v.setB_no(rs.getInt(1));
 					v.setName(rs.getString(2));
 					v.setGender(rs.getString(3));
 					v.setAp_content(rs.getString(4));
@@ -95,7 +89,7 @@ public class ApplicationDAO {
 				}
 				ConnectionProvider.close(rs, pstmt, conn);
 			} catch (Exception e) {
-				System.out.println("¿¹¿Ü¹ß»ý : " +e.getMessage());
+				System.out.println("ï¿½ï¿½ï¿½Ü¹ß»ï¿½ : " +e.getMessage());
 			}
 			return list;
 		}

@@ -22,7 +22,7 @@ public class LikedDAO {
 			
 			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, b.getNo());
+			pstmt.setInt(1, b.getB_no());
 			pstmt.setInt(2, LogInPage.getNO());
 			re = pstmt.executeUpdate();
 			ConnectionProvider.close(pstmt, conn);
@@ -40,13 +40,13 @@ public class LikedDAO {
 			
 			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, b.getNo());
+			pstmt.setInt(1, b.getB_no());
 			ResultSet rs = pstmt.executeQuery();
 			
 			if(rs.next()) {
 				int count = rs.getInt(1);
 				BoardVO v = new BoardVO();
-				v.setNo(rs.getInt(1));
+				v.setB_no(rs.getInt(1));
 			}
 			ConnectionProvider.close(pstmt, conn);
 		} catch (Exception e) {
@@ -58,7 +58,7 @@ public class LikedDAO {
 		public ArrayList<BoardVO> myLikedlist() {
 				ArrayList<BoardVO> list = new ArrayList<>();
 			try {
-				String sql = "select rownum, a.* from (select l.l_no, u.address, b.title, l.date_liked from board b, liked l, user_info u  "
+				String sql = "select a.* from (select l.l_no, u.address, b.title, l.date_liked from board b, liked l, user_info u  "
 						+ "where u.user_no= l.user_no and l.b_no = b.b_no and l.user_no = 2 order by date_liked desc) a where rownum <=5";
 				
 				Connection conn = ConnectionProvider.getConnection();
@@ -68,11 +68,10 @@ public class LikedDAO {
 				while(rs.next()) {
 					
 					BoardVO v = new BoardVO();
-					v.setNo(rs.getInt(1));
-					v.setB_no(rs.getInt(2));
-					v.setAddress(rs.getString(3));
-					v.setTitle(rs.getString(4));
-					v.setDate_board(rs.getDate(5));
+					v.setB_no(rs.getInt(1));
+					v.setAddress(rs.getString(2));
+					v.setTitle(rs.getString(3));
+					v.setDate_board(rs.getDate(4));
 					list.add(v);
 				}
 				ConnectionProvider.close(pstmt, conn);
