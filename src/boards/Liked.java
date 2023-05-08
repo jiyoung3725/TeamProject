@@ -11,7 +11,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
-//¼öÁ¤ ¿¹Á¤
+//ìˆ˜ì • ì˜ˆì •
 public class Liked extends JFrame implements ActionListener {
     JLabel title, content;
     JTable table;
@@ -26,18 +26,18 @@ public class Liked extends JFrame implements ActionListener {
         Container c = getContentPane();
         c.setLayout(null);
 
-        // Å¸ÀÌÆ² ·¹ÀÌºí
-        title = new JLabel("ÁÁ¾Æ¿ä °Ô½Ã±Û");
-        title.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 30));
+        // íƒ€ì´í‹€ ë ˆì´ë¸”
+        title = new JLabel("ì¢‹ì•„ìš” ê²Œì‹œê¸€");
+        title.setFont(new Font("ë§‘ì€ ê³ ë”•", Font.BOLD, 30));
         title.setBounds(150, 20, 300, 30);
         c.add(title);
 
-        // ÁÁ¾Æ¿ä ¸ñ·Ï Å×ÀÌºí
+        // ì¢‹ì•„ìš” ëª©ë¡ í…Œì´ë¸”
         colname = new Vector<String>();
-        colname.add("¹øÈ£");
-        colname.add("À§Ä¡");
-        colname.add("Á¦¸ñ");
-        colname.add("ÁÁ¾Æ¿äÀÏ");
+        colname.add("ë²ˆí˜¸");
+        colname.add("ìœ„ì¹˜");
+        colname.add("ì œëª©");
+        colname.add("ì¢‹ì•„ìš”ì¼");
         
         rowdata = new Vector<Vector<String>>();
         table = new JTable(rowdata,colname);
@@ -48,7 +48,7 @@ public class Liked extends JFrame implements ActionListener {
         c.add(jsp);
 
         loadliked();
-        setTitle("ÁÁ¾Æ¿ä °Ô½Ã±Û");
+        setTitle("ì¢‹ì•„ìš” ê²Œì‹œê¸€");
         setSize(500, 380);
         setVisible(true);
         setLocationRelativeTo(null);

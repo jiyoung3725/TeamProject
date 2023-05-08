@@ -16,7 +16,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
-//¼öÁ¤ ¿¹Á¤
+//ìˆ˜ì • ì˜ˆì •
 public class Applicationlist extends JFrame {
     JLabel title;
     JTable table;
@@ -29,19 +29,19 @@ public class Applicationlist extends JFrame {
         Container c = getContentPane();
         c.setLayout(null);
 
-        // Å¸ÀÌÆ² ·¹ÀÌºí
-        title = new JLabel("½ÅÃ» ¸®½ºÆ®");
-        title.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 30));
+        // íƒ€ì´í‹€ ë ˆì´ë¸”
+        title = new JLabel("ì‹ ì²­ ë¦¬ìŠ¤íŠ¸");
+        title.setFont(new Font("ë§‘ì€ ê³ ë”•", Font.BOLD, 30));
         title.setBounds(150, 20, 300, 30);
         c.add(title);
 
-        // ÁÁ¾Æ¿ä ¸ñ·Ï Å×ÀÌºí
+        // ì¢‹ì•„ìš” ëª©ë¡ í…Œì´ë¸”
         colname = new Vector<String>();
-        colname.add("¹øÈ£");
-        colname.add("½ÅÃ»ÀÚ");
-        colname.add("¼ºº°");
-        colname.add("½ÅÃ»³»¿ë");
-        colname.add("½ÅÃ»³¯Â¥");
+        colname.add("ë²ˆí˜¸");
+        colname.add("ì‹ ì²­ì");
+        colname.add("ì„±ë³„");
+        colname.add("ì‹ ì²­ë‚´ìš©");
+        colname.add("ì‹ ì²­ë‚ ì§œ");
         
         rowdata = new Vector<Vector<String>>();
         table = new JTable(rowdata,colname);
@@ -57,7 +57,7 @@ public class Applicationlist extends JFrame {
         c.add(jsp);
 
         loadapplylist();
-        setTitle("½ÅÃ» ¸®½ºÆ®");
+        setTitle("ì‹ ì²­ ë¦¬ìŠ¤íŠ¸");
         setSize(500, 380);
         setVisible(true);
         setLocationRelativeTo(null);
