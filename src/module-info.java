@@ -2,10 +2,11 @@
  * 
  */
 /**
- * @author mirac
+ * @author SIST
  *
  */
-module teamproject {
-	requires java.desktop;
+module TeamProject_1st_team {
 	requires java.sql;
+	requires java.desktop;
+	requires com.oracle.database.jdbc;
 }

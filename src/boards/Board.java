@@ -31,7 +31,7 @@ import javax.swing.table.TableRowSorter;
 
 import dao.BoardDAO;
 import vo.BoardVO;
-//수정 예정
+
 public class Board extends JFrame {
 	JTextField jtf_search;
 	JComboBox<String> jcb_option;	//같이해요, 우리동네 선택
@@ -43,6 +43,8 @@ public class Board extends JFrame {
 	JRadioButton jrb_option1;
 	JRadioButton jrb_option2;
 	ArrayList<BoardVO> list;
+	post_Reader pR;	//게시글 읽어오는 객체
+	public static int postNum;	//선택된 게시글
 		
 	public Board() {
 		JPanel p_main = new JPanel();	//게시판 메인 화면
@@ -163,9 +165,23 @@ public class Board extends JFrame {
 		
 		loadAllList(); 
 		setSize(800, 700);
-		 setLocationRelativeTo(null);
+		setLocationRelativeTo(null);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		//게시글 더블클릭시 게시글 상세페이지 팝업(수진_0508추가)
+		table.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent mouseEvent) {
+				JTable table = (JTable)mouseEvent.getSource();
+				Point point = mouseEvent.getPoint();
+				int idx = table.rowAtPoint(point);
+				if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
+					postNum = Integer.parseInt(rowData.get(idx).get(0));
+					pR = new post_Reader(postNum);	
+				}
+			}
+			
+		});
 		
 		// 게시글 작성 버튼
 		btn_write.addActionListener(new ActionListener() {
