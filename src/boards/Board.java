@@ -3,14 +3,13 @@ package boards;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.Console;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -31,10 +30,9 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 
-import Post.post_Reader;
 import dao.BoardDAO;
 import vo.BoardVO;
-
+//수정 예정
 public class Board extends JFrame {
 	JTextField jtf_search;
 	JComboBox<String> jcb_option;	//같이해요, 우리동네 선택
@@ -46,8 +44,6 @@ public class Board extends JFrame {
 	JRadioButton jrb_option1;
 	JRadioButton jrb_option2;
 	ArrayList<BoardVO> list;
-	post_Reader pR;	//게시글 읽어오는 객체
-	public static int postNum;	//선택된 게시글
 		
 	public Board() {
 		JPanel p_main = new JPanel();	//게시판 메인 화면
@@ -91,7 +87,7 @@ public class Board extends JFrame {
 		
 		p_main.add(p_search1, BorderLayout.NORTH);
 	
-		//체크박스 선택하여 관심사별 목록 구성 (기능구현X)
+		//체크박스 선택하여 관심사별 목록 구성
 		for(int i=0; i<jcb.length ; i++) {
 			jcb[i] = new JCheckBox(interest[i]);
 			p_interest.add(jcb[i]);
@@ -110,7 +106,7 @@ public class Board extends JFrame {
 			        ArrayList<BoardVO> list = dao.interestList(data);
 			        for (BoardVO b : list) {
 			            Vector<String> v = new Vector<>();
-			            v.add(b.getNo() + "");
+			            v.add(b.getB_no() + "");
 			            v.add(b.getAddress());
 			            v.add(b.getCategory());
 			            v.add(b.getInterest());
@@ -146,7 +142,6 @@ public class Board extends JFrame {
 		TableColumn column3 = columnModel.getColumn(3);
 		TableColumn column4 = columnModel.getColumn(4);
 		TableColumn column5 = columnModel.getColumn(5);
-		
 		column3.setPreferredWidth(100);
 		column4.setPreferredWidth(350);
 		column5.setPreferredWidth(110);
@@ -168,23 +163,9 @@ public class Board extends JFrame {
 		
 		loadAllList(); 
 		setSize(800, 700);
-		setLocationRelativeTo(null);
+		 setLocationRelativeTo(null);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		//게시글 더블클릭시 게시글 상세페이지 팝업(수진_0508추가)
-		table.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent mouseEvent) {
-				JTable table = (JTable)mouseEvent.getSource();
-				Point point = mouseEvent.getPoint();
-				int idx = table.rowAtPoint(point);
-				if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
-					postNum = Integer.parseInt(rowData.get(idx).get(0));
-					pR = new post_Reader(postNum);	
-				}
-			}
-			
-		});
 		
 		// 게시글 작성 버튼
 		btn_write.addActionListener(new ActionListener() {
@@ -213,16 +194,19 @@ public class Board extends JFrame {
 				rowData.clear();
 				BoardDAO dao = new BoardDAO();
 				String search = jtf_search.getText();
+				String category = (String) jcb_option.getSelectedItem();
+				ArrayList<BoardVO> list = dao.SearchList(search);
 				
 				if (jrb_option2.isSelected()) {
-				ArrayList<BoardVO> list = dao.dateSearchList(search);
-				
-				if (jrb_option1.isSelected()) {
-					ArrayList<BoardVO> list2 = dao.likedSearchList(search);
+				list = dao.dateSearchList(search);
 				}
+				if (jrb_option1.isSelected()) {
+				list = dao.likedSearchList(search);
+				}
+				
 				for( BoardVO b :list) {
 					Vector<String> v = new Vector<>();
-					v.add(b.getNo()+"");
+					v.add(b.getB_no()+"");
 					v.add(b.getAddress());
 					v.add(b.getCategory());
 					v.add(b.getInterest());
@@ -234,7 +218,6 @@ public class Board extends JFrame {
 					rowData.add(v);
 				}
 				table.updateUI();
-				}
 			}
 		});
 		
@@ -250,7 +233,7 @@ public class Board extends JFrame {
 					
 					for( BoardVO b :list) {
 						Vector<String> v = new Vector<>();
-						v.add(b.getNo()+"");
+						v.add(b.getB_no()+"");
 						v.add(b.getAddress());
 						v.add(b.getCategory());
 						v.add(b.getInterest());
@@ -275,10 +258,9 @@ public class Board extends JFrame {
 				if(jrb_option2.isSelected()) {
 					BoardDAO dao = new BoardDAO();
 					ArrayList<BoardVO> list = dao.viewNewestList();
-					
 					for( BoardVO b :list) {
 						Vector<String> v = new Vector<>();
-						v.add(b.getNo()+"");
+						v.add(b.getB_no()+"");
 						v.add(b.getAddress());
 						v.add(b.getCategory());
 						v.add(b.getInterest());
@@ -296,32 +278,33 @@ public class Board extends JFrame {
 		
 		// 글을 더블클릭 시 상세페이지로 연결
 		table.addMouseListener(new MouseListener() {
-			
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-			@Override
-			public void mousePressed(MouseEvent e) {
-// 상세페이지로 연결 예정
-				if(e.getClickCount() == 2 ) {
-				int row = table.getSelectedRow();
-//				BoardVO b = list.get(row);
-//				int b_no = b.getNo();
-				int col = table.getSelectedColumn();
-		        Object data = table.getValueAt(row, col);
-				Liked likedpage = new Liked();
-				likedpage.setVisible(true);
-				}
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {
-			}
-			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
+
+		    @Override
+		    public void mouseReleased(MouseEvent e) {
+		    }
+
+		    @Override
+		    public void mousePressed(MouseEvent e) {
+		        // 상세페이지로 연결 예정
+		        if (e.getClickCount() == 2) {
+		            updatehits();
+		            loadAllList();
+		            int row = table.getSelectedRow();
+		            int col = table.getSelectedColumn();
+		            Object data = table.getValueAt(row, col);
+		            Liked likedpage = new Liked();
+		            likedpage.setVisible(true);
+		        }
+		    }
+		    @Override
+		    public void mouseExited(MouseEvent e) {
+		    }
+		    @Override
+		    public void mouseEntered(MouseEvent e) {
+		    }
+		    @Override
+		    public void mouseClicked(MouseEvent e) {
+		    }
 		});
 	}
 	
@@ -345,7 +328,16 @@ public class Board extends JFrame {
 		}
 		table.updateUI();
 	}
-
+	public void updatehits() {
+	    int row = table.getSelectedRow();
+	    Vector<String> v = rowData.get(row);
+	    BoardDAO dao = new BoardDAO();
+	    BoardVO vo = new BoardVO();
+	    int hits = Integer.parseInt(v.get(7));	// 조회수 번호 설정
+	    vo.setB_no(Integer.parseInt(v.get(0))); // 게시글 번호 설정
+	    vo.setB_cnt(hits);
+	    int re = dao.updateHits(vo);
+	}
 	
 	public static void main(String[] args) {
 		new Board();
