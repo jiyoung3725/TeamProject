@@ -87,6 +87,22 @@ public class UserDAO {
 		} catch (Exception e) {System.out.println("getNO() 예외 발생 :"+e.getMessage());}
 		return name;
 	}
+	// ID를 매개변수로 유저 이름을 반환하는 메서드
+	public String getName(int NO) {
+		String name = "";
+		String sql = "select user_name from user_info where user_no = ?";
+		try {
+			Connection conn = ConnectionProvider.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, NO);
+			ResultSet rs = pstmt.executeQuery();
+			if(rs.next()) {
+				name =	rs.getString(1);
+			}
+			ConnectionProvider.close(rs, pstmt, conn);
+		} catch (Exception e) {System.out.println("getNO() 예외 발생 :"+e.getMessage());}
+		return name;
+	}
 	
 	// 유저번호를 매개변수로 ID를 반환하는 메서드
 	public String getID(int NO) {
