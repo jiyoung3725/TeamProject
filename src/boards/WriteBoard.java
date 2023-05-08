@@ -20,15 +20,14 @@ public class WriteBoard extends JFrame {
     public WriteBoard() {
         super("게시글 작성");
         // 상단 패널 생성
-        JPanel topPanel = new JPanel(new GridLayout(7, 1));
+        JPanel topPanel = new JPanel(new GridLayout(5, 1));
 
         // 타이틀 레이블
         
         title = new JLabel("  게시글 작성");
         title.setFont(new Font("맑은 고딕", Font.BOLD, 25));
-        
-        
         topPanel.add(title);
+        
         
         // 게시판 카테고리 선택 콤보박스
         JPanel p_top1 = new JPanel(new FlowLayout(FlowLayout.LEFT));

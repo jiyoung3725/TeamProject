@@ -52,7 +52,7 @@ public class Liked extends JFrame implements ActionListener {
         setSize(500, 380);
         setVisible(true);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+       // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
     }
 	
@@ -62,7 +62,7 @@ public class Liked extends JFrame implements ActionListener {
     	ArrayList<BoardVO> list = dao.myLikedlist();
     	for(BoardVO b:list) {
     		Vector<String> v = new Vector<>();
-    		v.add(b.getNo()+"");
+    		v.add(b.getB_no()+"");
     		v.add(b.getAddress());
     		v.add(b.getTitle());
     		v.add(b.getDate_board()+"");

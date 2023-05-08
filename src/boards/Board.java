@@ -195,6 +195,7 @@ public class Board extends JFrame {
 				BoardDAO dao = new BoardDAO();
 				String search = jtf_search.getText();
 				String category = (String) jcb_option.getSelectedItem();
+				
 				ArrayList<BoardVO> list = dao.SearchList(search);
 				
 				if (jrb_option2.isSelected()) {
@@ -202,6 +203,9 @@ public class Board extends JFrame {
 				}
 				if (jrb_option1.isSelected()) {
 				list = dao.likedSearchList(search);
+				}
+				if (jcb_option.getSelectedItem() != null) {
+				list = dao.categorySearchList(search, category);
 				}
 				
 				for( BoardVO b :list) {

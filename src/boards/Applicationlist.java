@@ -71,7 +71,7 @@ public class Applicationlist extends JFrame {
 		ArrayList<BoardVO> list = dao.applicationList();
 		for(BoardVO b :list) {
 			Vector<String> v = new Vector<>();
-			v.add(b.getNo()+"");
+			v.add(b.getB_no()+"");
 			v.add(b.getName());
 			v.add(b.getGender());
 			v.add(b.getAp_content());
