@@ -14,7 +14,7 @@ import vo.BoardVO;
 
 public class LikedDAO {
 
-	//ÁÁ¾Æ¿ä ¹öÆ°À» ´©¸¦ ¶§¸¶´Ù °Ô½Ã±ÛÀÇ Á¤º¸¸¦ ÁÁ¾Æ¿ä Å×ÀÌºí¿¡ Ãß°¡ÇÏ´Â Äõ¸®
+	//ì¢‹ì•„ìš” ë²„íŠ¼ì„ ëˆ„ë¥¼ ë•Œë§ˆë‹¤ ê²Œì‹œê¸€ì˜ ì •ë³´ë¥¼ ì¢‹ì•„ìš” í…Œì´ë¸”ì— ì¶”ê°€í•˜ëŠ” ì¿¼ë¦¬
 	public int insertLiked(BoardVO b) {
 		int re = -1;
 		try {
@@ -27,12 +27,12 @@ public class LikedDAO {
 			re = pstmt.executeUpdate();
 			ConnectionProvider.close(pstmt, conn);
 		} catch (Exception e) {
-			System.out.println("¿¹¿Ü¹ß»ı : " +e.getMessage());
+			System.out.println("ì˜ˆì™¸ë°œìƒ : " +e.getMessage());
 		}
 		return re;
 	}
 	
-	//ÁÁ¾Æ¿ä ¼ö Äõ¸®
+	//ì¢‹ì•„ìš” ìˆ˜ ì¿¼ë¦¬
 	public ArrayList<BoardVO> countLiked(BoardVO b) {
 			ArrayList<BoardVO> list = new ArrayList<>();
 		try {
@@ -50,15 +50,15 @@ public class LikedDAO {
 			}
 			ConnectionProvider.close(pstmt, conn);
 		} catch (Exception e) {
-			System.out.println("¿¹¿Ü¹ß»ı : " +e.getMessage());
+			System.out.println("ì˜ˆì™¸ë°œìƒ : " +e.getMessage());
 		}
 		return list;
 	}
-	//ÀÚ½ÅÀÇ ÁÁ¾Æ¿ä ¸ñ·ÏÀ» Á¶È¸ÇÏ´Â Äõ¸®
+	//ìì‹ ì˜ ì¢‹ì•„ìš” ëª©ë¡ì„ ì¡°íšŒí•˜ëŠ” ì¿¼ë¦¬
 		public ArrayList<BoardVO> myLikedlist() {
 				ArrayList<BoardVO> list = new ArrayList<>();
 			try {
-				String sql = "select a.* from (select l.l_no, u.address, b.title, l.date_liked from board b, liked l, user_info u  "
+				String sql = "select rownum, a.* from (select l.l_no, u.address, b.title, l.date_liked from board b, liked l, user_info u  "
 						+ "where u.user_no= l.user_no and l.b_no = b.b_no and l.user_no = 2 order by date_liked desc) a where rownum <=5";
 				
 				Connection conn = ConnectionProvider.getConnection();
@@ -66,20 +66,18 @@ public class LikedDAO {
 				ResultSet rs = pstmt.executeQuery(sql);
 				
 				while(rs.next()) {
-					int l_no = rs.getInt(1);
-					String address = rs.getString(2);
-					String title = rs.getString(3);
-					Date date_liked = rs.getDate(4);
+					
 					BoardVO v = new BoardVO();
 					v.setNo(rs.getInt(1));
-					v.setAddress(rs.getString(2));
-					v.setTitle(rs.getString(3));
-					v.setDate_board(rs.getDate(4));
+					v.setB_no(rs.getInt(2));
+					v.setAddress(rs.getString(3));
+					v.setTitle(rs.getString(4));
+					v.setDate_board(rs.getDate(5));
 					list.add(v);
 				}
 				ConnectionProvider.close(pstmt, conn);
 			} catch (Exception e) {
-				System.out.println("¿¹¿Ü¹ß»ı : " +e.getMessage());
+				System.out.println("ì˜ˆì™¸ë°œìƒ : " +e.getMessage());
 			}
 			return list;
 		}
