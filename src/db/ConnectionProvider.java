@@ -9,7 +9,7 @@ import java.util.Spliterator;
 
 public class ConnectionProvider {
 	//JDBC 드라이버를 메모리로 로드하고 DB서버에 연결한 커넥션 객체를 반환하는 클래스 메서드 만들기
-	public static Connection getConnecton() {
+	public static Connection getConnection() {
 		Connection conn = null;
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
