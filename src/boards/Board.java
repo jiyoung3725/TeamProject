@@ -101,7 +101,6 @@ public class Board extends JFrame {
 			                data += jcb[j].getText();
 			            }
 			        }
-
 			        BoardDAO dao = new BoardDAO();
 			        ArrayList<BoardVO> list = dao.interestList(data);
 			        for (BoardVO b : list) {
