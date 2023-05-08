@@ -1,12 +1,11 @@
 package dao;
 
-import java.awt.Checkbox;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 
 import db.ConnectionProvider;
 import first.LogInPage;
@@ -14,16 +13,42 @@ import vo.BoardVO;
 
 public class BoardDAO {
 	
-	// ¸ğµç °Ô½Ã±Û Á¶È¸
+	//ê²Œì‹œê¸€ ì‘ì„±
+	public int insertBoard(BoardVO b) {
+	    int re = -1;
+	    try {
+	        String sql = "insert into board (b_no, category, title, b_content, interest, date_board, application, user_no)"
+	                + "values (seq_board.nextval, ?, ?, ?, ?, sysdate, ?, ?)";
+
+	        Connection conn = ConnectionProvider.getConnection();
+	        PreparedStatement pstmt = conn.prepareStatement(sql);
+
+	        pstmt.setString(1, b.getCategory());
+	        pstmt.setString(2, b.getTitle());
+	        pstmt.setString(3, b.getB_content());
+	        pstmt.setString(4, b.getInterest());
+	        pstmt.setString(5, b.getAppilcation());
+	        pstmt.setInt(6, LogInPage.getNO());
+	        
+
+	        re = pstmt.executeUpdate();
+	        ConnectionProvider.close(pstmt, conn);
+	    } catch (Exception e) {
+	        System.out.println("ì˜ˆì™¸ë°œìƒ : " + e.getMessage());
+	    }
+	    return re;
+	}
+	
+	// ëª¨ë“  ê²Œì‹œê¸€ ì¡°íšŒ
 	public ArrayList<BoardVO> viewAllList(int page){
 		ArrayList<BoardVO> list = new ArrayList<>();
 		int start = 1 + (page-1)*10;
 		int end = 10*page;
 		try {
-			String sql = "select a.* "
-					+ "from (select u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+			String sql = "select rownum, a.* "
+					+ "from (select b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no "
-					+ "group by u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
+					+ "group by b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
 					+ "order by u.address, u.interest, date_board desc) a where rownum between ? and ?";
 			
 			Connection conn = ConnectionProvider.getConnection();
@@ -33,43 +58,34 @@ public class BoardDAO {
 			ResultSet rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
-				int no = rs.getInt(1);
-				String address = rs.getString(2);
-				String category = rs.getString(3);
-				String interest = rs.getString(4);
-				String title = rs.getString(5);
-				Date date_board = rs.getDate(6);
-				String application = rs.getString(7);
-				int b_cnt = rs.getInt(8);
-				int l_cnt = rs.getInt(9);
-				
 				BoardVO v = new BoardVO();
-				v.setNo(no);
-				v.setAddress(address);
-				v.setCategory(category);
-				v.setInterest(interest);
-				v.setTitle(title);
-				v.setDate_board(date_board);
-				v.setAppilcation(application);
-				v.setB_cnt(b_cnt);
-				v.setL_cnt(l_cnt);
+				v.setNo(rs.getInt(1));
+				v.setB_no(rs.getInt(2));
+				v.setAddress(rs.getString(3));
+				v.setCategory(rs.getString(4));
+				v.setInterest(rs.getString(5));
+				v.setTitle(rs.getString(6));
+				v.setDate_board(rs.getDate(7));
+				v.setAppilcation(rs.getString(8));
+				v.setB_cnt(rs.getInt(9));
+				v.setL_cnt(rs.getInt(10));
 				list.add(v);
 			}
 			ConnectionProvider.close(rs, pstmt, conn);
 			} catch (Exception e) {
-			System.out.println("¿¹¿Ü¹ß»ı:"+e.getMessage());
+			System.out.println("ì˜ˆì™¸ë°œìƒ:"+e.getMessage());
 		}
 		return list;
 	}
 	
-	// ÀÎ±â¼ø ¶óµğ¿À¹öÆ° ¼±ÅÃ ½Ã ÀÎ±â¼ø Á¶È¸ 
+	// ì¸ê¸°ìˆœ ë¼ë””ì˜¤ë²„íŠ¼ ì„ íƒ ì‹œ ì¸ê¸°ìˆœ ì¡°íšŒ 
 	public ArrayList<BoardVO> viewLikedList(){
 		ArrayList<BoardVO> list = new ArrayList<>();
 		try {
-			String sql = "select a.* "
-					+ "from (select u.user_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_no "
+			String sql = "select rownum, a.* "
+					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_no "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no "
-					+ "group by  u.user_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
+					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
 					+ "order by nvl(count(l.l_no), 0) desc, date_board desc) a where rownum <=10";
 			
 			Connection conn = ConnectionProvider.getConnection();
@@ -77,42 +93,34 @@ public class BoardDAO {
 			ResultSet rs = stmt.executeQuery(sql);
 			
 			while(rs.next()) {
-				int no = rs.getInt(1);
-				String address = rs.getString(2);
-				String category = rs.getString(3);
-				String interest = rs.getString(4);
-				String title = rs.getString(5);
-				Date date_board = rs.getDate(6);
-				String application = rs.getString(7);
-				int b_cnt = rs.getInt(8);
-				int l_cnt = rs.getInt(9);
 				
 				BoardVO v = new BoardVO();
 				v.setNo(rs.getInt(1));
-				v.setAddress(rs.getString(2));
-				v.setCategory(rs.getString(3));
-				v.setInterest(rs.getString(4));
-				v.setTitle(rs.getString(5));
-				v.setDate_board(rs.getDate(6));
-				v.setAppilcation(rs.getString(7));
-				v.setB_cnt(rs.getInt(8));
-				v.setL_cnt(rs.getInt(9));
+				v.setB_no(rs.getInt(2));
+				v.setAddress(rs.getString(3));
+				v.setCategory(rs.getString(4));
+				v.setInterest(rs.getString(5));
+				v.setTitle(rs.getString(6));
+				v.setDate_board(rs.getDate(7));
+				v.setAppilcation(rs.getString(8));
+				v.setB_cnt(rs.getInt(9));
+				v.setL_cnt(rs.getInt(10));
 				list.add(v);
 			}
 			ConnectionProvider.close(rs, stmt, conn);
 			} catch (Exception e) {
-			System.out.println("¿¹¿Ü¹ß»ı:"+e.getMessage());
+			System.out.println("ì˜ˆì™¸ë°œìƒ:"+e.getMessage());
 		}
 		return list;
 	}
-	// ÃÖ½Å¼ø ¶óµğ¿À¹öÆ° ¼±ÅÃ ½Ã ÀÎ±â¼ø Á¶È¸ 
+	// ìµœì‹ ìˆœ ë¼ë””ì˜¤ë²„íŠ¼ ì„ íƒ ì‹œ ì¸ê¸°ìˆœ ì¡°íšŒ 
 	public ArrayList<BoardVO> viewNewestList(){
 		ArrayList<BoardVO> list = new ArrayList<>();
 		try {
-			String sql = "select a.* "
-					+ "from (select u.user_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_no "
+			String sql = "select rownum, a.* "
+					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_no "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no "
-					+ "group by  u.user_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
+					+ "group by  b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
 					+ "order by date_board desc) a where rownum <=10";
 			
 			Connection conn = ConnectionProvider.getConnection();
@@ -120,44 +128,36 @@ public class BoardDAO {
 			ResultSet rs = stmt.executeQuery(sql);
 			
 			while(rs.next()) {
-				int no = rs.getInt(1);
-				String address = rs.getString(2);
-				String category = rs.getString(3);
-				String interest = rs.getString(4);
-				String title = rs.getString(5);
-				Date date_board = rs.getDate(6);
-				String application = rs.getString(7);
-				int b_cnt = rs.getInt(8);
-				int l_cnt = rs.getInt(9);
 				
 				BoardVO v = new BoardVO();
 				v.setNo(rs.getInt(1));
-				v.setAddress(rs.getString(2));
-				v.setCategory(rs.getString(3));
-				v.setInterest(rs.getString(4));
-				v.setTitle(rs.getString(5));
-				v.setDate_board(rs.getDate(6));
-				v.setAppilcation(rs.getString(7));
-				v.setB_cnt(rs.getInt(8));
-				v.setL_cnt(rs.getInt(9));
+				v.setB_no(rs.getInt(2));
+				v.setAddress(rs.getString(3));
+				v.setCategory(rs.getString(4));
+				v.setInterest(rs.getString(5));
+				v.setTitle(rs.getString(6));
+				v.setDate_board(rs.getDate(7));
+				v.setAppilcation(rs.getString(8));
+				v.setB_cnt(rs.getInt(9));
+				v.setL_cnt(rs.getInt(10));
 				list.add(v);
 			}
 			ConnectionProvider.close(rs, stmt, conn);
 			} catch (Exception e) {
-			System.out.println("¿¹¿Ü¹ß»ı:"+e.getMessage());
+			System.out.println("ì˜ˆì™¸ë°œìƒ:"+e.getMessage());
 		}
 		return list;
 	}
 	
-	// °Ë»ö Á¶È¸
+	// ê²€ìƒ‰ ì¡°íšŒ
 	public ArrayList<BoardVO> SearchList(String search){
 		ArrayList<BoardVO> list = new ArrayList<>();
 
 		try {
-			String sql = "select a.* "
-					+ "from (select u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+			String sql = "select rownum, a.* "
+					+ "from (select b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no where lower(trim(b.title)) like ? "
-					+ "group by u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
+					+ "group by b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
 					+ "order by u.interest, date_board desc) a where rownum <=10";
 			
 			Connection conn = ConnectionProvider.getConnection();
@@ -166,89 +166,73 @@ public class BoardDAO {
 			ResultSet rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
-				int no = rs.getInt(1);
-				String address = rs.getString(2);
-				String category = rs.getString(3);
-				String interest = rs.getString(4);
-				String title = rs.getString(5);
-				Date date_board = rs.getDate(6);
-				String application = rs.getString(7);
-				int b_cnt = rs.getInt(8);
-				int l_cnt = rs.getInt(9);
 				
 				BoardVO v = new BoardVO();
 				v.setNo(rs.getInt(1));
-				v.setAddress(rs.getString(2));
-				v.setCategory(rs.getString(3));
-				v.setInterest(rs.getString(4));
-				v.setTitle(rs.getString(5));
-				v.setDate_board(rs.getDate(6));
-				v.setAppilcation(rs.getString(7));
-				v.setB_cnt(rs.getInt(8));
-				v.setL_cnt(rs.getInt(9));
+				v.setB_no(rs.getInt(2));
+				v.setAddress(rs.getString(3));
+				v.setCategory(rs.getString(4));
+				v.setInterest(rs.getString(5));
+				v.setTitle(rs.getString(6));
+				v.setDate_board(rs.getDate(7));
+				v.setAppilcation(rs.getString(8));
+				v.setB_cnt(rs.getInt(9));
+				v.setL_cnt(rs.getInt(10));
 				list.add(v);
 			}
 			ConnectionProvider.close(rs, pstmt, conn);
 			} catch (Exception e) {
-			System.out.println("¿¹¿Ü¹ß»ı:"+e.getMessage());
+			System.out.println("ì˜ˆì™¸ë°œìƒ:"+e.getMessage());
 		}
 		return list;
 	}
 	
-	// ÀÎ±â¼ø¸¸ ¼±ÅÃ ÈÄ °Ë»öÇÏ´Â Äõ¸®
+	// ì¸ê¸°ìˆœë§Œ ì„ íƒ í›„ ê²€ìƒ‰í•˜ëŠ” ì¿¼ë¦¬ (ì˜¤ë¥˜ë°œìƒ)
 	public ArrayList<BoardVO> likedSearchList(String search){
 		ArrayList<BoardVO> list = new ArrayList<>();
 
 		try {
-			String sql = "select a.* "
-					+ "from (select u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+			String sql = "select rownum, a.* "
+					+ "from (select b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no where lower(trim(b.title)) like ? "
-					+ "group by u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
+					+ "group by b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
 					+ "order by nvl(count(l.l_no), 0) desc, date_board desc) a where rownum <=10";
-			
+
 			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, "%"+search+"%");
 			ResultSet rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
-				int no = rs.getInt(1);
-				String address = rs.getString(2);
-				String category = rs.getString(3);
-				String interest = rs.getString(4);
-				String title = rs.getString(5);
-				Date date_board = rs.getDate(6);
-				String application = rs.getString(7);
-				int b_cnt = rs.getInt(8);
-				int l_cnt = rs.getInt(9);
-				
+			
 				BoardVO v = new BoardVO();
 				v.setNo(rs.getInt(1));
-				v.setAddress(rs.getString(2));
-				v.setCategory(rs.getString(3));
-				v.setInterest(rs.getString(4));
-				v.setTitle(rs.getString(5));
-				v.setDate_board(rs.getDate(6));
-				v.setAppilcation(rs.getString(7));
-				v.setB_cnt(rs.getInt(8));
-				v.setL_cnt(rs.getInt(9));
+				v.setB_no(rs.getInt(2));
+				v.setAddress(rs.getString(3));
+				v.setCategory(rs.getString(4));
+				v.setInterest(rs.getString(5));
+				v.setTitle(rs.getString(6));
+				v.setDate_board(rs.getDate(7));
+				v.setAppilcation(rs.getString(8));
+				v.setB_cnt(rs.getInt(9));
+				v.setL_cnt(rs.getInt(10));
 				list.add(v);
 			}
 			ConnectionProvider.close(rs, pstmt, conn);
 			} catch (Exception e) {
-			System.out.println("¿¹¿Ü¹ß»ı:"+e.getMessage());
+			System.out.println("ì˜ˆì™¸ë°œìƒ:"+e.getMessage());
 		}
 		return list;
 	}
-	// ÃÖ±Ù¼ø¸¸ ¼±ÅÃ ÈÄ °Ë»öÇÏ´Â Äõ¸®
+	// ìµœê·¼ìˆœë§Œ ì„ íƒ í›„ ê²€ìƒ‰í•˜ëŠ” ì¿¼ë¦¬
 	public ArrayList<BoardVO> dateSearchList(String search){
 		ArrayList<BoardVO> list = new ArrayList<>();
 
 		try {
-			String sql = "select a.* "
-					+ "from (select u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+			String sql = "select rownum, a.* "
+					+ "from (select b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no where lower(trim(b.title)) like ? "
-					+ "group by u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
+					+ "group by b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
 					+ "order by date_board desc) a where rownum <=10";
 			
 			Connection conn = ConnectionProvider.getConnection();
@@ -257,43 +241,35 @@ public class BoardDAO {
 			ResultSet rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
-				int no = rs.getInt(1);
-				String address = rs.getString(2);
-				String category = rs.getString(3);
-				String interest = rs.getString(4);
-				String title = rs.getString(5);
-				Date date_board = rs.getDate(6);
-				String application = rs.getString(7);
-				int b_cnt = rs.getInt(8);
-				int l_cnt = rs.getInt(9);
 				
 				BoardVO v = new BoardVO();
 				v.setNo(rs.getInt(1));
-				v.setAddress(rs.getString(2));
-				v.setCategory(rs.getString(3));
-				v.setInterest(rs.getString(4));
-				v.setTitle(rs.getString(5));
-				v.setDate_board(rs.getDate(6));
-				v.setAppilcation(rs.getString(7));
-				v.setB_cnt(rs.getInt(8));
-				v.setL_cnt(rs.getInt(9));
+				v.setB_no(rs.getInt(2));
+				v.setAddress(rs.getString(3));
+				v.setCategory(rs.getString(4));
+				v.setInterest(rs.getString(5));
+				v.setTitle(rs.getString(6));
+				v.setDate_board(rs.getDate(7));
+				v.setAppilcation(rs.getString(8));
+				v.setB_cnt(rs.getInt(9));
+				v.setL_cnt(rs.getInt(10));
 				list.add(v);
 			}
 			ConnectionProvider.close(rs, pstmt, conn);
 			} catch (Exception e) {
-			System.out.println("¿¹¿Ü¹ß»ı:"+e.getMessage());
+			System.out.println("ì˜ˆì™¸ë°œìƒ:"+e.getMessage());
 		}
 		return list;
 	}
-	// Áö¿ª¿É¼Ç¸¸ ¼±ÅÃ ÈÄ °Ë»öÇÏ´Â Äõ¸®
+	// ì§€ì—­ì˜µì…˜ë§Œ ì„ íƒ í›„ ê²€ìƒ‰í•˜ëŠ” ì¿¼ë¦¬
 	public ArrayList<BoardVO> dateSearchList(String search, String addr){
 		ArrayList<BoardVO> list = new ArrayList<>();
 
 		try {
-			String sql = "select a.* "
-					+ "from (select u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+			String sql = "select rownum, a.* "
+					+ "from (select b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no where lower(trim(b.title)) like ? and u.address = ? "
-					+ "group by u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
+					+ "group by b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
 					+ "order by date_board desc) a where rownum <=10";
 			
 			Connection conn = ConnectionProvider.getConnection();
@@ -303,90 +279,78 @@ public class BoardDAO {
 			ResultSet rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
-				int no = rs.getInt(1);
-				String address = rs.getString(2);
-				String category = rs.getString(3);
-				String interest = rs.getString(4);
-				String title = rs.getString(5);
-				Date date_board = rs.getDate(6);
-				String application = rs.getString(7);
-				int b_cnt = rs.getInt(8);
-				int l_cnt = rs.getInt(9);
 				
 				BoardVO v = new BoardVO();
 				v.setNo(rs.getInt(1));
-				v.setAddress(rs.getString(2));
-				v.setCategory(rs.getString(3));
-				v.setInterest(rs.getString(4));
-				v.setTitle(rs.getString(5));
-				v.setDate_board(rs.getDate(6));
-				v.setAppilcation(rs.getString(7));
-				v.setB_cnt(rs.getInt(8));
-				v.setL_cnt(rs.getInt(9));
+				v.setB_no(rs.getInt(2));
+				v.setAddress(rs.getString(3));
+				v.setCategory(rs.getString(4));
+				v.setInterest(rs.getString(5));
+				v.setTitle(rs.getString(6));
+				v.setDate_board(rs.getDate(7));
+				v.setAppilcation(rs.getString(8));
+				v.setB_cnt(rs.getInt(9));
+				v.setL_cnt(rs.getInt(10));
 				list.add(v);
 			}
 			ConnectionProvider.close(rs, pstmt, conn);
 			} catch (Exception e) {
-			System.out.println("¿¹¿Ü¹ß»ı:"+e.getMessage());
+			System.out.println("ì˜ˆì™¸ë°œìƒ:"+e.getMessage());
 		}
 		return list;
 	}
-	//°ü½É»ç Ã¼Å©¹Ú½º¸¸ ¼±ÅÃ ÈÄ °Ë»öÇÏ´Â Äõ¸®
-	public ArrayList<BoardVO> interestList(ArrayList<String> interests){
-		ArrayList<BoardVO> list = new ArrayList<>();
-
-		try {
-			String sql = "select a.* "
-					+ "from (select u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
-					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no where b.interest like ? "
-					+ "group by u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
-					+ "order by date_board desc) a where rownum <=10";
-			
-			Connection conn = ConnectionProvider.getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, "%"+interests+"%");
-			
-			ResultSet rs = pstmt.executeQuery();
-			
-			while(rs.next()) {
-				int no = rs.getInt(1);
-				String address = rs.getString(2);
-				String category = rs.getString(3);
-				String interest = rs.getString(4);
-				String title = rs.getString(5);
-				Date date_board = rs.getDate(6);
-				String application = rs.getString(7);
-				int b_cnt = rs.getInt(8);
-				int l_cnt = rs.getInt(9);
-				
-				BoardVO v = new BoardVO();
-				v.setNo(rs.getInt(1));
-				v.setAddress(rs.getString(2));
-				v.setCategory(rs.getString(3));
-				v.setInterest(rs.getString(4));
-				v.setTitle(rs.getString(5));
-				v.setDate_board(rs.getDate(6));
-				v.setAppilcation(rs.getString(7));
-				v.setB_cnt(rs.getInt(8));
-				v.setL_cnt(rs.getInt(9));
+	//ê´€ì‹¬ì‚¬ ì²´í¬ë°•ìŠ¤ë§Œ ì„ íƒ í›„ ê²€ìƒ‰í•˜ëŠ” ì¿¼ë¦¬ (ê¸°ëŠ¥êµ¬í˜„x)
+	public ArrayList<BoardVO> interestList(String interest) {
+	    ArrayList<BoardVO> list = new ArrayList<>();
+	    
+	    try {
+	        String sql = "SELECT rownum, a.* " +
+	                     "FROM (SELECT b.b_no, u.address, b.category, u.interest, b.title, " +
+	                            "b.date_board, b.application, NVL(b.b_cnt, 0) b_cnt, NVL(COUNT(l.l_no), 0) l_cnt " +
+	                            "FROM board b LEFT OUTER JOIN user_info u ON u.user_no = b.user_no " +
+	                            "LEFT OUTER JOIN liked l ON l.b_no=b.b_no WHERE b.interest LIKE ? " +
+	                            "GROUP BY b.b_no, u.address, b.category, u.interest, b.title, b.date_board, " +
+	                            "b.application, NVL(b.b_cnt, 0) " +
+	                            "ORDER BY date_board DESC) a " +
+	                     "WHERE ROWNUM <= 10";
+	        
+	        Connection conn = ConnectionProvider.getConnection();
+	        PreparedStatement pstmt = conn.prepareStatement(sql);
+	        pstmt.setString(1, "%" + String.join(",", interest) + "%");
+	        ResultSet rs = pstmt.executeQuery();
+	        
+	        while(rs.next()) {
+	            BoardVO v = new BoardVO();
+	        	v.setNo(rs.getInt(1));
+				v.setB_no(rs.getInt(2));
+				v.setAddress(rs.getString(3));
+				v.setCategory(rs.getString(4));
+				v.setInterest(rs.getString(5));
+				v.setTitle(rs.getString(6));
+				v.setDate_board(rs.getDate(7));
+				v.setAppilcation(rs.getString(8));
+				v.setB_cnt(rs.getInt(9));
+				v.setL_cnt(rs.getInt(10));
 				list.add(v);
-			}
-			ConnectionProvider.close(rs, pstmt, conn);
-			} catch (Exception e) {
-			System.out.println("¿¹¿Ü¹ß»ı:"+e.getMessage());
-		}
-		return list;
+	        }
+	        
+	        ConnectionProvider.close(rs, pstmt, conn);
+	    } catch (Exception e) {
+	        System.out.println("ì˜ˆì™¸ ë°œìƒ: " + e.getMessage());
+	    }
+	    
+	    return list;
 	}
 	
-	//Ä«Å×°í¸®(µ¿³×»ıÈ°/ÇÔ²²ÇØ¿ä)¸¸ ¼±ÅÃ ÈÄ °Ë»öÇÏ´Â Äõ¸®
+	//ì¹´í…Œê³ ë¦¬(ë™ë„¤ìƒí™œ/í•¨ê»˜í•´ìš”)ë§Œ ì„ íƒ í›„ ê²€ìƒ‰í•˜ëŠ” ì¿¼ë¦¬
 	public ArrayList<BoardVO> categorySearchList(String search, String categorys){
 		ArrayList<BoardVO> list = new ArrayList<>();
 
 		try {
-			String sql = "select a.* "
-					+ "from (select u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+			String sql = "select rownum, a.* "
+					+ "from (select b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no where lower(trim(b.title)) like ? and b.category = ? "
-					+ "group by u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
+					+ "group by b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
 					+ "order by date_board desc) a where rownum <=10";
 			
 			Connection conn = ConnectionProvider.getConnection();
@@ -396,45 +360,37 @@ public class BoardDAO {
 			ResultSet rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
-				int no = rs.getInt(1);
-				String address = rs.getString(2);
-				String category = rs.getString(3);
-				String interest = rs.getString(4);
-				String title = rs.getString(5);
-				Date date_board = rs.getDate(6);
-				String application = rs.getString(7);
-				int b_cnt = rs.getInt(8);
-				int l_cnt = rs.getInt(9);
 				
 				BoardVO v = new BoardVO();
 				v.setNo(rs.getInt(1));
-				v.setAddress(rs.getString(2));
-				v.setCategory(rs.getString(3));
-				v.setInterest(rs.getString(4));
-				v.setTitle(rs.getString(5));
-				v.setDate_board(rs.getDate(6));
-				v.setAppilcation(rs.getString(7));
-				v.setB_cnt(rs.getInt(8));
-				v.setL_cnt(rs.getInt(9));
+				v.setB_no(rs.getInt(2));
+				v.setAddress(rs.getString(3));
+				v.setCategory(rs.getString(4));
+				v.setInterest(rs.getString(5));
+				v.setTitle(rs.getString(6));
+				v.setDate_board(rs.getDate(7));
+				v.setAppilcation(rs.getString(8));
+				v.setB_cnt(rs.getInt(9));
+				v.setL_cnt(rs.getInt(10));
 				list.add(v);
 			}
 			ConnectionProvider.close(rs, pstmt, conn);
 			} catch (Exception e) {
-			System.out.println("¿¹¿Ü¹ß»ı:"+e.getMessage());
+			System.out.println("ì˜ˆì™¸ë°œìƒ:"+e.getMessage());
 		}
 		return list;
 	}
 
-	//Áö¿ª, Ä«Å×°í¸®, °ü½É»ç, ÀÎ±â¼ø ¸ğµÎ ¼±ÅÃ ÈÄ °Ë»öÇÏ´Â Äõ¸®
+	//ì§€ì—­, ì¹´í…Œê³ ë¦¬, ê´€ì‹¬ì‚¬, ì¸ê¸°ìˆœ ëª¨ë‘ ì„ íƒ í›„ ê²€ìƒ‰í•˜ëŠ” ì¿¼ë¦¬
 	public ArrayList<BoardVO> AlloptionSearchList(String search, String categorys, String address, String interest){
 		ArrayList<BoardVO> list = new ArrayList<>();
 		
 		try {
-			String sql = "select a.* "
-					+ "from (select u.user_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+			String sql = "select rownum, a.* "
+					+ "from (select b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no "
 					+ "where lower(trim(b.title)) like ? and b.category = ? and u.address = ? and b.interest like ? "
-					+ "group by u.user_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) \r\n"
+					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
 					+ "order by nvl(count(l.l_no), 0) desc, date_board desc) a where rownum <=10";
 			
 		
@@ -447,31 +403,23 @@ public class BoardDAO {
 			ResultSet rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
-				int no = rs.getInt(1);
-				String addr = rs.getString(2);
-				String category = rs.getString(3);
-				String interested = rs.getString(4);
-				String title = rs.getString(5);
-				Date date_board = rs.getDate(6);
-				String application = rs.getString(7);
-				int b_cnt = rs.getInt(8);
-				int l_cnt = rs.getInt(9);
-				
+			
 				BoardVO v = new BoardVO();
 				v.setNo(rs.getInt(1));
-				v.setAddress(rs.getString(2));
-				v.setCategory(rs.getString(3));
-				v.setInterest(rs.getString(4));
-				v.setTitle(rs.getString(5));
-				v.setDate_board(rs.getDate(6));
-				v.setAppilcation(rs.getString(7));
-				v.setB_cnt(rs.getInt(8));
-				v.setL_cnt(rs.getInt(9));
+				v.setB_no(rs.getInt(2));
+				v.setAddress(rs.getString(3));
+				v.setCategory(rs.getString(4));
+				v.setInterest(rs.getString(5));
+				v.setTitle(rs.getString(6));
+				v.setDate_board(rs.getDate(7));
+				v.setAppilcation(rs.getString(8));
+				v.setB_cnt(rs.getInt(9));
+				v.setL_cnt(rs.getInt(10));
 				list.add(v);
 			}
 			ConnectionProvider.close(rs, pstmt, conn);
 			} catch (Exception e) {
-			System.out.println("¿¹¿Ü¹ß»ı:"+e.getMessage());
+			System.out.println("ì˜ˆì™¸ë°œìƒ:"+e.getMessage());
 		}
 		return list;
 	}
