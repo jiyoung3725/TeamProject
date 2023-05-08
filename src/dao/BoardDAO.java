@@ -22,19 +22,33 @@ public class BoardDAO {
 
 	        Connection conn = ConnectionProvider.getConnection();
 	        PreparedStatement pstmt = conn.prepareStatement(sql);
-
+	        
 	        pstmt.setString(1, b.getCategory());
 	        pstmt.setString(2, b.getTitle());
 	        pstmt.setString(3, b.getB_content());
 	        pstmt.setString(4, b.getInterest());
 	        pstmt.setString(5, b.getAppilcation());
 	        pstmt.setInt(6, LogInPage.getNO());
-	        
-
 	        re = pstmt.executeUpdate();
 	        ConnectionProvider.close(pstmt, conn);
 	    } catch (Exception e) {
 	        System.out.println("예외발생 : " + e.getMessage());
+	    }
+	    return re;
+	}
+	
+	// 조회수 업데이트 
+	public int updateHits(BoardVO b) {
+	    int re = -1;
+	    String sql = "UPDATE board SET b_cnt = b_cnt + 1 WHERE b_no = ?";
+	    try {
+	        Connection conn = ConnectionProvider.getConnection();
+	        PreparedStatement pstmt = conn.prepareStatement(sql);
+	        pstmt.setInt(1, b.getB_no());
+	        re = pstmt.executeUpdate();
+	        ConnectionProvider.close(pstmt, conn);
+	    } catch (Exception e) {
+	        System.out.println("예외발생:" + e.getMessage());
 	    }
 	    return re;
 	}
@@ -45,11 +59,11 @@ public class BoardDAO {
 		int start = 1 + (page-1)*10;
 		int end = 10*page;
 		try {
-			String sql = "select rownum, a.* "
-					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+			String sql = "select a.* "
+					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, b.b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no "
-					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
-					+ "order by b.b_no desc, u.address, b.interest, date_board desc) a where rownum between ? and ?";
+					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, b.b_cnt "
+					+ "order by b.b_no desc, b.interest, date_board desc) a where rownum between ? and ?";
 			
 			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -59,16 +73,15 @@ public class BoardDAO {
 			
 			while(rs.next()) {
 				BoardVO v = new BoardVO();
-				v.setNo(rs.getInt(1));
-				v.setB_no(rs.getInt(2));
-				v.setAddress(rs.getString(3));
-				v.setCategory(rs.getString(4));
-				v.setInterest(rs.getString(5));
-				v.setTitle(rs.getString(6));
-				v.setDate_board(rs.getDate(7));
-				v.setAppilcation(rs.getString(8));
-				v.setB_cnt(rs.getInt(9));
-				v.setL_cnt(rs.getInt(10));
+				v.setB_no(rs.getInt(1));
+				v.setAddress(rs.getString(2));
+				v.setCategory(rs.getString(3));
+				v.setInterest(rs.getString(4));
+				v.setTitle(rs.getString(5));
+				v.setDate_board(rs.getDate(6));
+				v.setAppilcation(rs.getString(7));
+				v.setB_cnt(rs.getInt(8));
+				v.setL_cnt(rs.getInt(9));
 				list.add(v);
 			}
 			ConnectionProvider.close(rs, pstmt, conn);
@@ -82,11 +95,11 @@ public class BoardDAO {
 	public ArrayList<BoardVO> viewLikedList(){
 		ArrayList<BoardVO> list = new ArrayList<>();
 		try {
-			String sql = "select rownum, a.* "
-					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_no "
+			String sql = "select a.* "
+					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, b.b_cnt, nvl(count(l.l_no), 0) l_no "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no "
-					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
-					+ "order by b.b_no desc, nvl(count(l.l_no), 0) desc, date_board desc) a where rownum <=10";
+					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, b.b_cnt "
+					+ "order by nvl(count(l.l_no), 0) desc, date_board desc) a where rownum <=10";
 			
 			Connection conn = ConnectionProvider.getConnection();
 			Statement stmt = conn.createStatement();
@@ -95,16 +108,15 @@ public class BoardDAO {
 			while(rs.next()) {
 				
 				BoardVO v = new BoardVO();
-				v.setNo(rs.getInt(1));
-				v.setB_no(rs.getInt(2));
-				v.setAddress(rs.getString(3));
-				v.setCategory(rs.getString(4));
-				v.setInterest(rs.getString(5));
-				v.setTitle(rs.getString(6));
-				v.setDate_board(rs.getDate(7));
-				v.setAppilcation(rs.getString(8));
-				v.setB_cnt(rs.getInt(9));
-				v.setL_cnt(rs.getInt(10));
+				v.setB_no(rs.getInt(1));
+				v.setAddress(rs.getString(2));
+				v.setCategory(rs.getString(3));
+				v.setInterest(rs.getString(4));
+				v.setTitle(rs.getString(5));
+				v.setDate_board(rs.getDate(6));
+				v.setAppilcation(rs.getString(7));
+				v.setB_cnt(rs.getInt(8));
+				v.setL_cnt(rs.getInt(9));
 				list.add(v);
 			}
 			ConnectionProvider.close(rs, stmt, conn);
@@ -117,11 +129,11 @@ public class BoardDAO {
 	public ArrayList<BoardVO> viewNewestList(){
 		ArrayList<BoardVO> list = new ArrayList<>();
 		try {
-			String sql = "select rownum, a.* "
-					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_no "
+			String sql = "select a.* "
+					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, b.b_cnt, nvl(count(l.l_no), 0) l_no "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no "
-					+ "group by  b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
-					+ "order by b.b_no desc, date_board desc) a where rownum <=10";
+					+ "group by  b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, b.b_cnt "
+					+ "order by date_board desc) a where rownum <=10";
 			
 			Connection conn = ConnectionProvider.getConnection();
 			Statement stmt = conn.createStatement();
@@ -130,16 +142,15 @@ public class BoardDAO {
 			while(rs.next()) {
 				
 				BoardVO v = new BoardVO();
-				v.setNo(rs.getInt(1));
-				v.setB_no(rs.getInt(2));
-				v.setAddress(rs.getString(3));
-				v.setCategory(rs.getString(4));
-				v.setInterest(rs.getString(5));
-				v.setTitle(rs.getString(6));
-				v.setDate_board(rs.getDate(7));
-				v.setAppilcation(rs.getString(8));
-				v.setB_cnt(rs.getInt(9));
-				v.setL_cnt(rs.getInt(10));
+				v.setB_no(rs.getInt(1));
+				v.setAddress(rs.getString(2));
+				v.setCategory(rs.getString(3));
+				v.setInterest(rs.getString(4));
+				v.setTitle(rs.getString(5));
+				v.setDate_board(rs.getDate(6));
+				v.setAppilcation(rs.getString(7));
+				v.setB_cnt(rs.getInt(8));
+				v.setL_cnt(rs.getInt(9));
 				list.add(v);
 			}
 			ConnectionProvider.close(rs, stmt, conn);
@@ -154,11 +165,11 @@ public class BoardDAO {
 		ArrayList<BoardVO> list = new ArrayList<>();
 
 		try {
-			String sql = "select rownum, a.* "
-					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+			String sql = "select a.* "
+					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, b.b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no where lower(trim(b.title)) like ? "
-					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
-					+ "order by b.b_no desc, u.interest, date_board desc) a where rownum <=10";
+					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, b.b_cnt "
+					+ "order by b.interest, date_board desc) a where rownum <=10";
 			
 			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -168,16 +179,15 @@ public class BoardDAO {
 			while(rs.next()) {
 				
 				BoardVO v = new BoardVO();
-				v.setNo(rs.getInt(1));
-				v.setB_no(rs.getInt(2));
-				v.setAddress(rs.getString(3));
-				v.setCategory(rs.getString(4));
-				v.setInterest(rs.getString(5));
-				v.setTitle(rs.getString(6));
-				v.setDate_board(rs.getDate(7));
-				v.setAppilcation(rs.getString(8));
-				v.setB_cnt(rs.getInt(9));
-				v.setL_cnt(rs.getInt(10));
+				v.setB_no(rs.getInt(1));
+				v.setAddress(rs.getString(2));
+				v.setCategory(rs.getString(3));
+				v.setInterest(rs.getString(4));
+				v.setTitle(rs.getString(5));
+				v.setDate_board(rs.getDate(6));
+				v.setAppilcation(rs.getString(7));
+				v.setB_cnt(rs.getInt(8));
+				v.setL_cnt(rs.getInt(9));
 				list.add(v);
 			}
 			ConnectionProvider.close(rs, pstmt, conn);
@@ -192,10 +202,10 @@ public class BoardDAO {
 		ArrayList<BoardVO> list = new ArrayList<>();
 
 		try {
-			String sql = "select rownum, a.* "
-					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+			String sql = "select a.* "
+					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, b.b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no where lower(trim(b.title)) like ? "
-					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
+					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, b.b_cnt "
 					+ "order by b.b_no desc, nvl(count(l.l_no), 0) desc, date_board desc) a where rownum <=10";
 
 			Connection conn = ConnectionProvider.getConnection();
@@ -206,16 +216,15 @@ public class BoardDAO {
 			while(rs.next()) {
 			
 				BoardVO v = new BoardVO();
-				v.setNo(rs.getInt(1));
-				v.setB_no(rs.getInt(2));
-				v.setAddress(rs.getString(3));
-				v.setCategory(rs.getString(4));
-				v.setInterest(rs.getString(5));
-				v.setTitle(rs.getString(6));
-				v.setDate_board(rs.getDate(7));
-				v.setAppilcation(rs.getString(8));
-				v.setB_cnt(rs.getInt(9));
-				v.setL_cnt(rs.getInt(10));
+				v.setB_no(rs.getInt(1));
+				v.setAddress(rs.getString(2));
+				v.setCategory(rs.getString(3));
+				v.setInterest(rs.getString(4));
+				v.setTitle(rs.getString(5));
+				v.setDate_board(rs.getDate(6));
+				v.setAppilcation(rs.getString(7));
+				v.setB_cnt(rs.getInt(8));
+				v.setL_cnt(rs.getInt(9));
 				list.add(v);
 			}
 			ConnectionProvider.close(rs, pstmt, conn);
@@ -229,10 +238,10 @@ public class BoardDAO {
 		ArrayList<BoardVO> list = new ArrayList<>();
 
 		try {
-			String sql = "select rownum, a.* "
-					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+			String sql = "select a.* "
+					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, b.b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no where lower(trim(b.title)) like ? "
-					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
+					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, b.b_cnt "
 					+ "order by b.b_no desc, date_board desc) a where rownum <=10";
 			
 			Connection conn = ConnectionProvider.getConnection();
@@ -243,16 +252,15 @@ public class BoardDAO {
 			while(rs.next()) {
 				
 				BoardVO v = new BoardVO();
-				v.setNo(rs.getInt(1));
-				v.setB_no(rs.getInt(2));
-				v.setAddress(rs.getString(3));
-				v.setCategory(rs.getString(4));
-				v.setInterest(rs.getString(5));
-				v.setTitle(rs.getString(6));
-				v.setDate_board(rs.getDate(7));
-				v.setAppilcation(rs.getString(8));
-				v.setB_cnt(rs.getInt(9));
-				v.setL_cnt(rs.getInt(10));
+				v.setB_no(rs.getInt(1));
+				v.setAddress(rs.getString(2));
+				v.setCategory(rs.getString(3));
+				v.setInterest(rs.getString(4));
+				v.setTitle(rs.getString(5));
+				v.setDate_board(rs.getDate(6));
+				v.setAppilcation(rs.getString(7));
+				v.setB_cnt(rs.getInt(8));
+				v.setL_cnt(rs.getInt(9));
 				list.add(v);
 			}
 			ConnectionProvider.close(rs, pstmt, conn);
@@ -266,10 +274,10 @@ public class BoardDAO {
 		ArrayList<BoardVO> list = new ArrayList<>();
 
 		try {
-			String sql = "select rownum, a.* "
-					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+			String sql = "select a.* "
+					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, b.b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no where lower(trim(b.title)) like ? and u.address = ? "
-					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
+					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, b.b_cnt "
 					+ "order by b.b_no desc, date_board desc) a where rownum <=10";
 			
 			Connection conn = ConnectionProvider.getConnection();
@@ -281,16 +289,15 @@ public class BoardDAO {
 			while(rs.next()) {
 				
 				BoardVO v = new BoardVO();
-				v.setNo(rs.getInt(1));
-				v.setB_no(rs.getInt(2));
-				v.setAddress(rs.getString(3));
-				v.setCategory(rs.getString(4));
-				v.setInterest(rs.getString(5));
-				v.setTitle(rs.getString(6));
-				v.setDate_board(rs.getDate(7));
-				v.setAppilcation(rs.getString(8));
-				v.setB_cnt(rs.getInt(9));
-				v.setL_cnt(rs.getInt(10));
+				v.setB_no(rs.getInt(1));
+				v.setAddress(rs.getString(2));
+				v.setCategory(rs.getString(3));
+				v.setInterest(rs.getString(4));
+				v.setTitle(rs.getString(5));
+				v.setDate_board(rs.getDate(6));
+				v.setAppilcation(rs.getString(7));
+				v.setB_cnt(rs.getInt(8));
+				v.setL_cnt(rs.getInt(9));
 				list.add(v);
 			}
 			ConnectionProvider.close(rs, pstmt, conn);
@@ -304,13 +311,13 @@ public class BoardDAO {
 	    ArrayList<BoardVO> list = new ArrayList<>();
 	    
 	    try {
-	        String sql = "SELECT rownum, a.* " +
+	        String sql = "SELECT a.* " +
 	                     "FROM (SELECT b.b_no, u.address, b.category, b.interest, b.title, " +
-	                            "b.date_board, b.application, NVL(b.b_cnt, 0) b_cnt, NVL(COUNT(l.l_no), 0) l_cnt " +
+	                            "b.date_board, b.application, b.b_cnt, NVL(COUNT(l.l_no), 0) l_cnt " +
 	                            "FROM board b LEFT OUTER JOIN user_info u ON u.user_no = b.user_no " +
 	                            "LEFT OUTER JOIN liked l ON l.b_no=b.b_no WHERE b.interest LIKE ? " +
 	                            "GROUP BY b.b_no, u.address, b.category, b.interest, b.title, b.date_board, " +
-	                            "b.application, NVL(b.b_cnt, 0) " +
+	                            "b.application, b.b_cnt " +
 	                            "ORDER BY b.b_no desc, date_board DESC) a " +
 	                     "WHERE ROWNUM <= 10";
 	        
@@ -320,17 +327,16 @@ public class BoardDAO {
 	        ResultSet rs = pstmt.executeQuery();
 	        
 	        while(rs.next()) {
-	            BoardVO v = new BoardVO();
-	        	v.setNo(rs.getInt(1));
-				v.setB_no(rs.getInt(2));
-				v.setAddress(rs.getString(3));
-				v.setCategory(rs.getString(4));
-				v.setInterest(rs.getString(5));
-				v.setTitle(rs.getString(6));
-				v.setDate_board(rs.getDate(7));
-				v.setAppilcation(rs.getString(8));
-				v.setB_cnt(rs.getInt(9));
-				v.setL_cnt(rs.getInt(10));
+	        	BoardVO v = new BoardVO();
+				v.setB_no(rs.getInt(1));
+				v.setAddress(rs.getString(2));
+				v.setCategory(rs.getString(3));
+				v.setInterest(rs.getString(4));
+				v.setTitle(rs.getString(5));
+				v.setDate_board(rs.getDate(6));
+				v.setAppilcation(rs.getString(7));
+				v.setB_cnt(rs.getInt(8));
+				v.setL_cnt(rs.getInt(9));
 				list.add(v);
 	        }
 	        
@@ -347,10 +353,10 @@ public class BoardDAO {
 		ArrayList<BoardVO> list = new ArrayList<>();
 
 		try {
-			String sql = "select rownum, a.* "
-					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+			String sql = "select a.* "
+					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, b.b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no where lower(trim(b.title)) like ? and b.category = ? "
-					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
+					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, b.b_cnt "
 					+ "order by b.b_no desc, date_board desc) a where rownum <=10";
 			
 			Connection conn = ConnectionProvider.getConnection();
@@ -362,16 +368,15 @@ public class BoardDAO {
 			while(rs.next()) {
 				
 				BoardVO v = new BoardVO();
-				v.setNo(rs.getInt(1));
-				v.setB_no(rs.getInt(2));
-				v.setAddress(rs.getString(3));
-				v.setCategory(rs.getString(4));
-				v.setInterest(rs.getString(5));
-				v.setTitle(rs.getString(6));
-				v.setDate_board(rs.getDate(7));
-				v.setAppilcation(rs.getString(8));
-				v.setB_cnt(rs.getInt(9));
-				v.setL_cnt(rs.getInt(10));
+				v.setB_no(rs.getInt(1));
+				v.setAddress(rs.getString(2));
+				v.setCategory(rs.getString(3));
+				v.setInterest(rs.getString(4));
+				v.setTitle(rs.getString(5));
+				v.setDate_board(rs.getDate(6));
+				v.setAppilcation(rs.getString(7));
+				v.setB_cnt(rs.getInt(8));
+				v.setL_cnt(rs.getInt(9));
 				list.add(v);
 			}
 			ConnectionProvider.close(rs, pstmt, conn);
@@ -386,11 +391,11 @@ public class BoardDAO {
 		ArrayList<BoardVO> list = new ArrayList<>();
 		
 		try {
-			String sql = "select rownum, a.* "
-					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+			String sql = "select a.* "
+					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, b.b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no "
 					+ "where lower(trim(b.title)) like ? and b.category = ? and u.address = ? and b.interest like ? "
-					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
+					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, b.b_cnt "
 					+ "order by b.b_no desc, nvl(count(l.l_no), 0) desc, date_board desc) a where rownum <=10";
 			
 		
@@ -405,16 +410,15 @@ public class BoardDAO {
 			while(rs.next()) {
 			
 				BoardVO v = new BoardVO();
-				v.setNo(rs.getInt(1));
-				v.setB_no(rs.getInt(2));
-				v.setAddress(rs.getString(3));
-				v.setCategory(rs.getString(4));
-				v.setInterest(rs.getString(5));
-				v.setTitle(rs.getString(6));
-				v.setDate_board(rs.getDate(7));
-				v.setAppilcation(rs.getString(8));
-				v.setB_cnt(rs.getInt(9));
-				v.setL_cnt(rs.getInt(10));
+				v.setB_no(rs.getInt(1));
+				v.setAddress(rs.getString(2));
+				v.setCategory(rs.getString(3));
+				v.setInterest(rs.getString(4));
+				v.setTitle(rs.getString(5));
+				v.setDate_board(rs.getDate(6));
+				v.setAppilcation(rs.getString(7));
+				v.setB_cnt(rs.getInt(8));
+				v.setL_cnt(rs.getInt(9));
 				list.add(v);
 			}
 			ConnectionProvider.close(rs, pstmt, conn);
