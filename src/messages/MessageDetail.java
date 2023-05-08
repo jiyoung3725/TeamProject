@@ -16,104 +16,42 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import dao.FriendDAO;
-import dao.MemoDAO;
+import dao.MessageDAO;
+import dao.UserDAO;
 import first.LogInPage;
-import vo.MemoVO;
+import vo.MesssageVO;
+// 상세 메세지를 보여주는 jframe
+public class MessageDetail extends MessageFrame {
+	private MesssageVO m;
+	public MessageDetail(String type, MesssageVO m) {
+		this.m=m;
+		// 쪽지 내용 담을 textarea 생성
+		jta_content.setText(m.getContent());
 
-public class MessageDetail extends JFrame {
-	static String sender;
-	
-	public MessageDetail(MemoVO m) {
+		// 보낸 쪽지함인지, 받은 쪽지함인지에 따라 다른 String 설정
+		String tmp = type.equals("send")?"받은 사람 : ":"보낸 사람 : ";
 		
-		sender = m.getSender_name();
-		JButton btn_delete = new JButton("삭제");
-		JButton btn_reply = new JButton("답장");
-		setLayout(new FlowLayout());
-		add(new JLabel("보낸 사람 : "+sender));
-		JTextArea jta = new JTextArea(10,20);
-		jta.setText(m.getContent());
-		add(new JScrollPane(jta));
+		// 화면설정
+		add(new JLabel(tmp+m.getSender_name()));
+		add(new JScrollPane(jta_content));
 		add(btn_delete);
 		add(btn_reply);
-		setVisible(true);
-		setSize(300,300);
 		
-		btn_reply.addActionListener(e->new MemoReply());
-		btn_delete.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int re = new MemoDAO().deleteMessage(m);
-				if(re==-1) {
-					JOptionPane.showMessageDialog(null, "쪽지 삭제 실패");
-				} else JOptionPane.showMessageDialog(null, "쪽지 삭제 성공");
-			}
-		});
+		btn_reply.addActionListener(this);
+		btn_delete.addActionListener(this);
 	}
-}
-
-class MemoReply extends JFrame{
-	JTextArea jtf_content;
-	MemoReply(){
-		jtf_content = new JTextArea(10, 20);
-		JScrollPane jsp = new JScrollPane(jtf_content);
-		JButton btn_send = new JButton("전송");
-		JButton btn_exit = new JButton("취소");
-		add(new JLabel("보낼 사람 : "+MessageDetail.sender));
-		add(jsp);
-		add(btn_send);
-		add(btn_exit);
-		setLayout(new FlowLayout());
-		setVisible(true);
-		setSize(300,300);
-		
-		btn_send.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				MemoVO m = new MemoVO();
-				m.setContent(jtf_content.getText());
-				m.setSender_no(LogInPage.NO);
-				m.setRecipient_no(new MemoDAO().getSenderNO(MessageDetail.sender));
-				int re = new MemoDAO().sendMessages(m);
-				if(re==-1) JOptionPane.showMessageDialog(null, "실패");
-				else JOptionPane.showMessageDialog(null, "성공");
+	// 각 버튼 actionlistenr 삽입
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource()==btn_reply) new MessageReply(m);
+		if(e.getSource()==btn_delete) {
+			int re = new MessageDAO().deleteMessage(m.getM_no()); 
+			if(re==-1) {
+				JOptionPane.showMessageDialog(null, "쪽지 삭제 실패");
+			} else {
+				JOptionPane.showMessageDialog(null, "쪽지 삭제 성공");
+				dispose();
 			}
-		});
-	}
-}
-
-class MemoNew extends JFrame{
-	JTextArea jtf_content;
-	MemoNew(){
-		jtf_content = new JTextArea(10, 20);
-		JScrollPane jsp = new JScrollPane(jtf_content);
-		JButton btn_send = new JButton("전송");
-		JButton btn_exit = new JButton("취소");
-		ArrayList<String> list = new FriendDAO().getFriendlist(LogInPage.NO);
-		String[] arr = list.toArray(new String[list.size()]);
-		JComboBox<String> jcb_list = new JComboBox<String>(arr);
-		add(new JLabel("보낼 사람 : "));
-		add(jcb_list);
-		add(jsp);
-		add(btn_send);
-		add(btn_exit);
-		setLayout(new FlowLayout());
-		setVisible(true);
-		setSize(300,300);
-		
-		btn_send.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				MemoVO m = new MemoVO();
-				m.setContent(jtf_content.getText());
-				m.setSender_no(LogInPage.NO);
-				m.setRecipient_no(new MemoDAO().getSenderNO(arr[jcb_list.getSelectedIndex()]));
-				int re = new MemoDAO().sendMessages(m);
-				if(re==-1) JOptionPane.showMessageDialog(null, "실패");
-				else JOptionPane.showMessageDialog(null, "성공");
-			}
-		});
+		}
 	}
 }
