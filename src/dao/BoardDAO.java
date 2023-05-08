@@ -46,10 +46,10 @@ public class BoardDAO {
 		int end = 10*page;
 		try {
 			String sql = "select rownum, a.* "
-					+ "from (select b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no "
-					+ "group by b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
-					+ "order by u.address, u.interest, date_board desc) a where rownum between ? and ?";
+					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
+					+ "order by b.b_no desc, u.address, b.interest, date_board desc) a where rownum between ? and ?";
 			
 			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -86,7 +86,7 @@ public class BoardDAO {
 					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_no "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no "
 					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
-					+ "order by nvl(count(l.l_no), 0) desc, date_board desc) a where rownum <=10";
+					+ "order by b.b_no desc, nvl(count(l.l_no), 0) desc, date_board desc) a where rownum <=10";
 			
 			Connection conn = ConnectionProvider.getConnection();
 			Statement stmt = conn.createStatement();
@@ -121,7 +121,7 @@ public class BoardDAO {
 					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_no "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no "
 					+ "group by  b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
-					+ "order by date_board desc) a where rownum <=10";
+					+ "order by b.b_no desc, date_board desc) a where rownum <=10";
 			
 			Connection conn = ConnectionProvider.getConnection();
 			Statement stmt = conn.createStatement();
@@ -155,10 +155,10 @@ public class BoardDAO {
 
 		try {
 			String sql = "select rownum, a.* "
-					+ "from (select b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no where lower(trim(b.title)) like ? "
-					+ "group by b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
-					+ "order by u.interest, date_board desc) a where rownum <=10";
+					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
+					+ "order by b.b_no desc, u.interest, date_board desc) a where rownum <=10";
 			
 			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -193,10 +193,10 @@ public class BoardDAO {
 
 		try {
 			String sql = "select rownum, a.* "
-					+ "from (select b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no where lower(trim(b.title)) like ? "
-					+ "group by b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
-					+ "order by nvl(count(l.l_no), 0) desc, date_board desc) a where rownum <=10";
+					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
+					+ "order by b.b_no desc, nvl(count(l.l_no), 0) desc, date_board desc) a where rownum <=10";
 
 			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -230,10 +230,10 @@ public class BoardDAO {
 
 		try {
 			String sql = "select rownum, a.* "
-					+ "from (select b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no where lower(trim(b.title)) like ? "
-					+ "group by b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
-					+ "order by date_board desc) a where rownum <=10";
+					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
+					+ "order by b.b_no desc, date_board desc) a where rownum <=10";
 			
 			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -267,10 +267,10 @@ public class BoardDAO {
 
 		try {
 			String sql = "select rownum, a.* "
-					+ "from (select b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no where lower(trim(b.title)) like ? and u.address = ? "
-					+ "group by b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
-					+ "order by date_board desc) a where rownum <=10";
+					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
+					+ "order by b.b_no desc, date_board desc) a where rownum <=10";
 			
 			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -305,13 +305,13 @@ public class BoardDAO {
 	    
 	    try {
 	        String sql = "SELECT rownum, a.* " +
-	                     "FROM (SELECT b.b_no, u.address, b.category, u.interest, b.title, " +
+	                     "FROM (SELECT b.b_no, u.address, b.category, b.interest, b.title, " +
 	                            "b.date_board, b.application, NVL(b.b_cnt, 0) b_cnt, NVL(COUNT(l.l_no), 0) l_cnt " +
 	                            "FROM board b LEFT OUTER JOIN user_info u ON u.user_no = b.user_no " +
 	                            "LEFT OUTER JOIN liked l ON l.b_no=b.b_no WHERE b.interest LIKE ? " +
-	                            "GROUP BY b.b_no, u.address, b.category, u.interest, b.title, b.date_board, " +
+	                            "GROUP BY b.b_no, u.address, b.category, b.interest, b.title, b.date_board, " +
 	                            "b.application, NVL(b.b_cnt, 0) " +
-	                            "ORDER BY date_board DESC) a " +
+	                            "ORDER BY b.b_no desc, date_board DESC) a " +
 	                     "WHERE ROWNUM <= 10";
 	        
 	        Connection conn = ConnectionProvider.getConnection();
@@ -348,10 +348,10 @@ public class BoardDAO {
 
 		try {
 			String sql = "select rownum, a.* "
-					+ "from (select b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no where lower(trim(b.title)) like ? and b.category = ? "
-					+ "group by b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
-					+ "order by date_board desc) a where rownum <=10";
+					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
+					+ "order by b.b_no desc, date_board desc) a where rownum <=10";
 			
 			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -387,11 +387,11 @@ public class BoardDAO {
 		
 		try {
 			String sql = "select rownum, a.* "
-					+ "from (select b.b_no, u.address, b.category, u.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
+					+ "from (select b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) b_cnt, nvl(count(l.l_no), 0) l_cnt "
 					+ "from board b left outer join user_info u on u.user_no = b.user_no left outer join liked l on l.b_no=b.b_no "
 					+ "where lower(trim(b.title)) like ? and b.category = ? and u.address = ? and b.interest like ? "
 					+ "group by b.b_no, u.address, b.category, b.interest, b.title, b.date_board, b.application, nvl(b.b_cnt,0) "
-					+ "order by nvl(count(l.l_no), 0) desc, date_board desc) a where rownum <=10";
+					+ "order by b.b_no desc, nvl(count(l.l_no), 0) desc, date_board desc) a where rownum <=10";
 			
 		
 			Connection conn = ConnectionProvider.getConnection();
