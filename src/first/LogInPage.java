@@ -14,36 +14,31 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import admin.Admin;
 import dao.UserDAO;
-import home.MainPage;
 import vo.UserVO;
 
 // 로그인 화면
 public class LogInPage extends JFrame {
-	JTextField input_id;
-	JTextField input_pwd;
-	JButton btn_login;
-	JButton btn_signup;
-	public static int NO;
-	Image background = new ImageIcon("login.jpg").getImage();
+	private JTextField jtf_id;
+	private JTextField jtf_pwd;
+	private JButton btn_login;
+	private JButton btn_signup;
+	private static  int NO;
+
 	public LogInPage() {
-		
-		JPanel pan_background = new JPanel() {
-			public void paintComponent(Graphics g) {
-		        super.paintComponent(g);
-		        // 배경 이미지 그리기
-		        g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
-		    }
-		};
-		pan_background.setBounds(0, 0, 790, 730);
-		
+		// 배경 이미지 넣기 ( 라벨에 넣어줌)
+		JLabel jlb = new JLabel(new ImageIcon("login.jpg"));
+		jlb.setBounds(-10, -10, 790, 730);
+
 		// 로그인 판넬 구성
- 		input_id = new JTextField(10);
-		input_pwd = new JTextField(10);
-		input_id.setBounds(350, 340, 200, 40);
-		input_pwd.setBounds(350, 400, 200, 40);
+ 		jtf_id = new JTextField(10);
+		jtf_pwd = new JPasswordField(10);
+		jtf_id.setBounds(350, 340, 200, 40);
+		jtf_pwd.setBounds(350, 400, 200, 40);
 
 		// 버튼 판넬 구성
 		btn_login = new JButton("로그인");
@@ -54,9 +49,9 @@ public class LogInPage extends JFrame {
 		
 		// 전체 프레임 화면 구성
 		setLayout(null);
-		add(pan_background);
-		add(input_id);
-		add(input_pwd);
+		add(jlb);
+		add(jtf_id);
+		add(jtf_pwd);
 		add(btn_login);
 		add(btn_signup);
 		setVisible(true);
@@ -68,27 +63,39 @@ public class LogInPage extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String id = input_id.getText();
+				String input_id = jtf_id.getText();
+				String input_pwd = jtf_pwd.getText();
 				// id, pwd 텍스트 필드가 공란일 때
-				if(id.equals("")) {
+				if(input_id.equals("")) {
 					JOptionPane.showMessageDialog(null, "아이디를 입력하세요.");
 					return;
-				} else if(input_pwd.getText().equals("")) {
+				} else if(input_pwd.equals("")) {
 					JOptionPane.showMessageDialog(null, "비밀번호를 입력하세요.");
 					return;
 				}
+				// id 존재 여부 검사
+				if(new UserDAO().checkID(input_id)<1) {
+					JOptionPane.showMessageDialog(null, "존재하지 않는 아이디입니다.");
+					jtf_id.setText("");
+					jtf_pwd.setText("");
+					return;
+				}
 				
+				if(input_id.equals("admin") && input_pwd.equals("admin")) {
+					new Admin();
+					dispose();
+					return;
+				}
 				// id, pwd 로그인 유효성 검사
-				String PWD = new UserDAO().getPWD(input_id.getText());
-				if(input_pwd.getText().equals(PWD)) {
-					UserVO u = new UserVO();
-					u.setId(input_id.getText());
-					u.setPwd(input_pwd.getText());
-					NO = new UserDAO().getNO(u);
+				String PWD = new UserDAO().getPWD(input_id);
+				if(input_pwd.equals(PWD)) {		// 아이디와 비밀번호가 맞을떄
+					NO = new UserDAO().getNO(input_id);		// 로그인 시 프로그램 내에서 쓰일 회원 번호 초기화
 					new MainPage();
-					setVisible(false); // 로그인 성공하면 First 프레임 invisible
-				} else if(PWD.equals("")){JOptionPane.showMessageDialog(null, "존재하지 않는 아이디입니다.");
-				} else {JOptionPane.showMessageDialog(null, "비밀번호가 잘못되었습니다.");}
+					dispose();
+				} else {
+					JOptionPane.showMessageDialog(null, "비밀번호가 잘못되었습니다.");
+					jtf_pwd.setText("");
+				}
 			}
 		});
 		
@@ -101,6 +108,9 @@ public class LogInPage extends JFrame {
 		new LogInPage();
 	}
 	
+	public static int getNO() {
+		return NO;
+	}
 	
 
 
