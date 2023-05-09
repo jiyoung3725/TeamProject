@@ -36,26 +36,24 @@ public class ApplicationDAO {
 	}
 	
 	//��û �� ����
-	public ArrayList<BoardVO> countApplication(BoardVO b) {
-			ArrayList<BoardVO> list = new ArrayList<>();
+	//0508_16:44 수정_전체 신청 가능 인원과 현재 신청 인원 출력
+	public HashMap<String, Object> countApplication(BoardVO b) {
+		HashMap<String, Object> map_apply = new HashMap<String, Object>();
 		try {
-			String sql = "select count(ap_no) from application a, board b where a.b_no=b.b_no and b.b_no = ?";
-			
+			String sql = "select count(ap_no)+1, b.recruit_no from application a, board b where a.b_no=b.b_no and b.b_no = "+b.getNo();
+			//게시글 작성자 수까지 +1로 수정 0508_15:38
 			Connection conn = ConnectionProvider.getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, b.getB_no());
-			ResultSet rs = pstmt.executeQuery();
-			
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
 			if(rs.next()) {
-				BoardVO v = new BoardVO();
-				v.setB_no(rs.getInt(1));
-				
+				map_apply.put("cnt_apply",rs.getInt(1));
+				map_apply.put("recruit_no",rs.getInt(2));
 			}
-			ConnectionProvider.close(pstmt, conn);
+			ConnectionProvider.close(rs, stmt, conn);
 		} catch (Exception e) {
-			System.out.println("���ܹ߻� : " +e.getMessage());
+			System.out.println("예외: " +e.getMessage());
 		}
-		return list;
+		return map_apply;
 	}
 	//�ۼ��� ��û���� ��ȸ
 		public ArrayList<BoardVO> applicationList() {
