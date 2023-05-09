@@ -3,26 +3,22 @@ package first;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.ImageIcon;
-import javax.swing.JColorChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
+import Game.GameMain;
 import boards.Board;
-import dao.UserDAO;
+import customer.MainTest;
 import home.Home;
 import home.Setting;
 import messages.Message;
 import utillist.RoundedButton;
-import vo.UserVO;
 
 
 public class MainPage extends JFrame implements ActionListener{
@@ -34,18 +30,18 @@ public class MainPage extends JFrame implements ActionListener{
 		// 메인 화면 및 각 게시판 Panel 생성 (CardLayout을 이용한 화면 전환)
 		pan_main = new JPanel(cadrdlayout);
 		JPanel pan_home = new Home(LogInPage.getNO());	// JPanel을 상속한 Home 클래스 호출
-		JPanel pan_board = new JPanel();
+		JPanel pan_board = new Home(LogInPage.getNO());
 		JPanel pan_memssage = new Message();	// JPanel을 상속한 Memo 클래스 호출
-		JPanel pan_game = new JPanel();
-		JPanel pan_cs = new JPanel();
+		JPanel pan_game = new Home(LogInPage.getNO());
+		JPanel pan_cs = new MainTest();
 		JPanel pan_setting = new Setting();	// JPanel을 상속한 Setting 클래스 호출
 		
 		pan_main.add("홈", pan_home);
+//		pan_main.add("커뮤니티", pan_board);
 		pan_main.add("쪽지함", pan_memssage);
-		pan_main.add("게임",pan_game);
+//		pan_main.add("게임",pan_game);
 		pan_main.add("고객센터",pan_cs);
 		pan_main.add("관리", pan_setting);
-		pan_main.setBackground(new Color(206,212,192));
 		
 		// 기본으로 보여지는 화면은 홈 Panel
 		cadrdlayout.show(pan_main, "홈");
@@ -60,7 +56,6 @@ public class MainPage extends JFrame implements ActionListener{
 			btn_arr[i].addActionListener(this);
 			pan_btn.add(btn_arr[i]);
 		}
-		pan_btn.setBackground(new Color(206,212,192));
 		
 		// 화면 설정
 		add(pan_main, BorderLayout.CENTER);
@@ -79,6 +74,8 @@ public class MainPage extends JFrame implements ActionListener{
 			new LogInPage();
 		} else if(e.getSource()==btn_arr[1]) {	// 커뮤니티 버튼 눌렀을 때 board frame 호출
 			new Board();	
+		} else if(e.getSource()==btn_arr[3]) {
+			new GameMain();
 		}
 		
 		// 카드 레이아웃을 사용한 화면 전환

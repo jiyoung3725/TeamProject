@@ -54,9 +54,6 @@ public class LogInPage extends JFrame {
 		add(jtf_pwd);
 		add(btn_login);
 		add(btn_signup);
-		setVisible(true);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(790, 730);
 		
 		// 로그인 버튼 actionlistener
 		btn_login.addActionListener(new ActionListener() {
@@ -101,6 +98,9 @@ public class LogInPage extends JFrame {
 		
 		// 회원가입 버튼 눌렀을 때 회원가입 frame 호출
 		btn_signup.addActionListener(e->new Signup());
+		setVisible(true);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(790, 730);
 	}
 	
 	// main 메서드

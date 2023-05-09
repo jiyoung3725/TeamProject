@@ -17,6 +17,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import dao.UserDAO;
+import jdk.javadoc.internal.doclets.formats.html.ModuleFrameWriter;
 import utillist.RoundedButton;
 import utillist.Utils;
 import vo.UserVO;
@@ -52,8 +53,8 @@ public class Signup extends JFrame implements KeyListener {
 		jtf_email1 = new JTextField(6);
 		jtf_email2 = new JTextField(6);
 		// 콤보박스를 이용한 관심사, 거주지 선택 
-		JComboBox<String> addr_list = Utils.getAddrList();
-		JComboBox<String> interest_list = Utils.getInterestList();
+		JComboBox<String> addr_list = new JComboBox<String>(Utils.address);
+		JComboBox<String> interest_list = new JComboBox<String>(Utils.interest);
 		
 		// 각 패널에 각 필드 담아주기
 		JPanel pan_id = new JPanel();
@@ -94,7 +95,7 @@ public class Signup extends JFrame implements KeyListener {
 		 
 		// 아이디 중복 확인버튼 만들기
 		JButton btn_idcheck = new RoundedButton("중복 확인");
-		btn_idcheck.setBounds(260,80, 80, 20);
+		btn_idcheck.setBounds(260,90, 80, 20);
 		isCheckedID = false;	// 중복확인 여부 boolean
 
 		
