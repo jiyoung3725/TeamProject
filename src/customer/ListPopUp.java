@@ -26,7 +26,7 @@ public class ListPopUp extends JFrame {
 	JScrollPane jsp2 = new JScrollPane(jta);
 	
 	public ListPopUp() {
-	
+		jta.setEditable(false);
 		answer = new JTextArea(5,40);
 		JScrollPane jsp = new JScrollPane(answer);
 		btn_add = new JButton("등록");
@@ -38,7 +38,7 @@ public class ListPopUp extends JFrame {
 
 		add(p, BorderLayout.CENTER);
 		add(p2, BorderLayout.SOUTH);
-		setTitle("답변이 등록되었습니다");
+		setTitle("답변");
 		setSize(500,400);
 		setVisible(true);
 		

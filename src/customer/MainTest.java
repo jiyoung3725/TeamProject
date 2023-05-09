@@ -1,9 +1,17 @@
 package customer;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -25,36 +33,33 @@ import com.sist.vo.QnAVo;
 public class MainTest extends JFrame {
 	//<탭 생성화면>
 	JTextArea jta_content;
-	JButton btn_search;
 	JButton btn_chat;
 	JTabbedPane pane;
-	JTabbedPane inner_pane; 
-	JTextField jtf_search;
-	Frequent_QnA tab;
-	
-	Inner_qna tab01;
-	Qna_List tab02;
+	JTabbedPane inner_pane; //메인탭 중 2개의 이너탭을 포함하는 탭1 
+	Frequent_QnA tab;		//메인탭 중 탭2
+	Inner_qna tab01;		//이너탭으로 넣을 클래스1
+	Qna_List tab02;			//이너탭으로 넣을 클래스2
 	
 	public MainTest() {
 		JPanel p1 = new JPanel();
 		JLabel label = new JLabel("하비타운 고객센터");
 		label.setFont(new Font("맑은고딕",getFont().BOLD,20));
-		btn_search = new JButton("검색");
+		
 		btn_chat = new JButton("채팅 상담하기");
 		jta_content = new JTextArea();
-		jtf_search = new JTextField(30);
+	
 	    pane = new JTabbedPane();
 		inner_pane = new JTabbedPane();
 		tab01 = new Inner_qna();
 		tab02 = new Qna_List();
 		tab = new Frequent_QnA();
-		JPanel p = new JPanel();
-		p.add(label);
-		p.add(jtf_search);
-		p.add(btn_search);
-		p.add(btn_chat);
-		add(p, BorderLayout.NORTH);
 		
+		JPanel p = new JPanel();
+		p.setBackground(new Color(221,234,255));
+		p.setLayout(new BorderLayout());
+		p.add(label, BorderLayout.CENTER);
+		p.add(btn_chat,BorderLayout.EAST);
+		add(p, BorderLayout.NORTH);
 		
 		pane.addTab("1:1문의", inner_pane);
 		pane.addTab("자주묻는 질문", tab);
@@ -76,30 +81,24 @@ public class MainTest extends JFrame {
 				if(row==0) {
 				
 				}else {
+					
 					tab02.loadData();
 				}
 			}
 		});
-//		//<검색버튼 누르면 해당하는 문의글 나오는 기능 >
-//		btn_search.addActionListener(new ActionListener() {
-//			
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				Inner_qna i = new Inner_qna();
-//				String title = i.jtf_title.getText();
-//				String content = i.jta_content.getText();
-//				QnaDAO dao = new QnaDAO();
-//				ArrayList<QnAVo> list = dao.findAll(title, content);
-//				for(QnAVo vo : list) {
-//					String allTitle = vo.getQ_title();
-//					String allContent = vo.getQ_content();
-//					QnAVo v = new QnAVo();
-//					v.setQ_title(title);
-//					v.setQ_content(content);
-//					list.add(v);
-//				}
-//			}
-//		});
+	//<실시간 채팅버튼을 누르면 채팅창 실행되는 이벤트리스너>
+		btn_chat.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ChatHandler server = new ChatHandler();
+				Chat chat = new Chat();
+
+			}
+		});
+	
+		
+
 	}
 	
 	public static void main(String[] args) {

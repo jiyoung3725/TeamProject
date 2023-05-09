@@ -88,36 +88,53 @@ import com.sist.vo.QnAVo;
 
 			setSize(600,500);
 			setVisible(true);
-			//<보내기 버튼을 눌러 사용자가 입력한 내용을 추가하는 메소드>
-			btn_send.addActionListener(new ActionListener() {
+			
+			//<체크박스가 체크됐을 때 보내기 누를 수 있도록 이벤트리스너 생성>
+			check_b.addActionListener(new ActionListener() {
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					
-					String type = (String)combo_b.getSelectedItem();
-					String mail = jtf_mail.getText();
-					String title = jtf_title.getText();
-					String content = jta_content.getText();
-					QnAVo v = new QnAVo();
-					QnaDAO dao = new QnaDAO();
-					int count = dao.addData(type, mail, title, content);
-					if(count==1) {
-						JOptionPane.showMessageDialog(null, "문의가 등록되었습니다.");
-						dao.blankAnswer(); // 문의글이 정상적으로 등록됐을 때 내용이 빈 답변새성 메소드 호출
-						jtf_mail.setText("");
-						jtf_title.setText("");
-						jta_content.setText("");
-						jtf_file.setText("");
+					if(check_b.isSelected()) {
 						
-						
+						//<보내기 버튼을 눌러 사용자가 입력한 내용을 추가하는 메소드>
+						btn_send.addActionListener(new ActionListener() {
+							
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								
+								String type = (String)combo_b.getSelectedItem();
+								String mail = jtf_mail.getText();
+								String title = jtf_title.getText();
+								String content = jta_content.getText();
+								QnAVo v = new QnAVo();
+								QnaDAO dao = new QnaDAO();
+								int count = dao.addData(type, mail, title, content);
+								
+								if(count==4) {
+									JOptionPane.showMessageDialog(null, "문의가 등록되었습니다.");
+									dao.blankAnswer(); // 문의글이 정상적으로 등록됐을 때 내용이 빈 답변새성 메소드 호출
+									jtf_mail.setText("");
+									jtf_title.setText("");
+									jta_content.setText("");
+									jtf_file.setText("");
+									
+								}else {
+									JOptionPane.showMessageDialog(null, "빈칸이 있습니다.");
+								}
+							}
+						});
 					}else {
-						JOptionPane.showMessageDialog(null, "빈칸이 있습니다.");
+						btn_send.addActionListener(new ActionListener() {
+							
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								JOptionPane.showMessageDialog(null, "체크박스선택");
+							}
+						});
+						
 					}
-					
 				}
-				
-				
-				
+					
 			});
 		}
 

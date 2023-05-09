@@ -64,7 +64,7 @@ public class Qna_List extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				row = table.getSelectedRow();
-				Vector<String> v = rowData.get(row+1);
+				Vector<String> v = rowData.get(row);
 				 ListPopUp p = new ListPopUp();
 				 
 				 //<저장되어있는 관리자답변을 댓글창(jta)에 불러오는 sql문 호출>
