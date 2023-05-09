@@ -5,7 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
+import java.util.HashMap;
 import java.util.Vector;
 
 import db.ConnectionProvider;
@@ -15,7 +16,7 @@ import vo.UserVO;
 
 public class ApplicationDAO {
 
-	//����ڰ� ��û������ ��û������ �ۼ��ϴ� ����
+	//사용자가 신청란에서 신청내용을 작성하는 쿼리
 	public int insertApplication(BoardVO b) {
 		int re = -1;
 		try {
@@ -30,17 +31,17 @@ public class ApplicationDAO {
 			re = pstmt.executeUpdate();
 			ConnectionProvider.close(pstmt, conn);
 		} catch (Exception e) {
-			System.out.println("���ܹ߻� : " +e.getMessage());
+			System.out.println("예외발생: " +e.getMessage());
 		}
 		return re;
 	}
 	
-	//��û �� ����
+	//신청 수 쿼리
 	//0508_16:44 수정_전체 신청 가능 인원과 현재 신청 인원 출력
 	public HashMap<String, Object> countApplication(BoardVO b) {
 		HashMap<String, Object> map_apply = new HashMap<String, Object>();
 		try {
-			String sql = "select count(ap_no)+1, b.recruit_no from application a, board b where a.b_no=b.b_no and b.b_no = "+b.getNo();
+			String sql = "select count(ap_no)+1, b.recruit_no from application a, board b where a.b_no=b.b_no and b.b_no = "+b.getB_no();
 			//게시글 작성자 수까지 +1로 수정 0508_15:38
 			Connection conn = ConnectionProvider.getConnection();
 			Statement stmt = conn.createStatement();
@@ -55,25 +56,24 @@ public class ApplicationDAO {
 		}
 		return map_apply;
 	}
-	//�ۼ��� ��û���� ��ȸ
+	
+	//작성자가 신청정보 조회
 		public ArrayList<BoardVO> applicationList() {
 				ArrayList<BoardVO> list = new ArrayList<>();
 			try {
 				String sql = "select a.* from "
-						+ "(select distinct u.user_no, u.user_name, decode(substr(jumin,8,1),1,'��',2,'��',3,'��',4,'��') gender, "
+						+ "(select distinct u.user_no, u.user_name, decode(substr(jumin,8,1),1,'남',2,'여',3,'남',4,'여') gender, "
 						+ "a.ap_content, a.date_application "
 						+ "from board b, user_info u, application a "
 						+ "where b.b_no=a.b_no and u.user_no=b.user_no "
-						+ "and a.user_no <> 2 and u.user_no = 2 "
+						+ "and a.user_no <> ? and u.user_no = ? "
 						+ "order by date_application desc) a where rownum <=10";
 				
 				Connection conn = ConnectionProvider.getConnection();
-				Statement pstmt = conn.createStatement();
-//				PreparedStatement pstmt = conn.prepareStatement(sql);
-//				pstmt.setInt(1, LogInPage.NO);
-//				pstmt.setInt(2, LogInPage.NO);
-				
-				ResultSet rs = pstmt.executeQuery(sql);
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt.setInt(1, LogInPage.getNO());
+				pstmt.setInt(2, LogInPage.getNO());
+				ResultSet rs = pstmt.executeQuery();
 				
 				while(rs.next()) {
 					BoardVO v = new BoardVO();
