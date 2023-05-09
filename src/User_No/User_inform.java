@@ -14,8 +14,6 @@ public class User_inform {
 	
 	public HashMap<String, Object> userInform() {
 		HashMap<String, Object> map = new HashMap<String, Object>();
-//		B_no b_no = new B_no();
-//		int b_no_selected = b_no.boardNo();
 		int b_no_selected = Board.postNum;
 		String sql = "SELECT b_no, b.user_no, user_id "
 				+ "FROM board b, user_info u "
