@@ -34,6 +34,7 @@ import dao.BoardDAO;
 import vo.BoardVO;
 //수정 예정
 public class Board extends JFrame {
+	int row = 1;
 	JTextField jtf_search;
 	JComboBox<String> jcb_option;	//같이해요, 우리동네 선택
 	String []interest = {"건강/운동","음식/요리","영화/공연/전시","미술/공예","노래/음악","재테크","기타"};
@@ -132,13 +133,12 @@ public class Board extends JFrame {
 		colNames.add("관심사");
 		colNames.add("제목");
 		colNames.add("작성날짜");
-		colNames.add("모집여부");
+		colNames.add("모집인원");
 		colNames.add("조회수");
 		colNames.add("♥");
 		table = new JTable(rowData, colNames);
 		JScrollPane jsp = new JScrollPane(table);
 		TableColumnModel columnModel = table.getColumnModel();
-		
 		TableColumn column3 = columnModel.getColumn(3);
 		TableColumn column4 = columnModel.getColumn(4);
 		TableColumn column5 = columnModel.getColumn(5);
@@ -146,11 +146,11 @@ public class Board extends JFrame {
 		column4.setPreferredWidth(350);
 		column5.setPreferredWidth(110);
 		table.revalidate();
-		table.setRowHeight(35);
+		table.setRowHeight(50);
 		p_main.add(jsp, BorderLayout.CENTER);
 		
 		JButton btn_pre = new JButton("이전");
-		JLabel jlb_page = new JLabel("page");	//page 번호에 따라 바뀌도록 수정 예정
+		JLabel jlb_page = new JLabel("page");	
 		JButton btn_post = new JButton("다음");
 		p_etc2.add(btn_pre);
 		p_etc2.add(jlb_page);
@@ -161,11 +161,43 @@ public class Board extends JFrame {
 		p_main.add(p_etc, BorderLayout.SOUTH);
 		add(p_main);
 		
-		loadAllList(); 
-		setSize(800, 700);
+		loadList(row); 
+		setTitle("커뮤니티 게시판");
+		setSize(800, 707);
 		 setLocationRelativeTo(null);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		
+		// 게시글 이전 버튼 
+		btn_pre.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(row == 0) {
+					JOptionPane.showMessageDialog(null, "첫 페이지 입니다.");
+				}else {
+					row--;
+					loadList(row);
+				}
+			}
+		});
+		
+		
+		// 게시글 다음 버튼
+		btn_post.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(row == rowData.size()-1) {
+					JOptionPane.showMessageDialog(null, "마지막 페이지 입니다.");
+				}else {
+					row++;
+					loadList(row);
+				}
+				
+			}
+		});
 		
 		// 게시글 작성 버튼
 		btn_write.addActionListener(new ActionListener() {
@@ -182,10 +214,11 @@ public class Board extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				loadAllList();
+				loadList(row);
 				
 			}
 		});
+		
 		// 검색 이벤트 설정
 		btn_search.addActionListener(new ActionListener() {
 			
@@ -292,7 +325,7 @@ public class Board extends JFrame {
 		        // 상세페이지로 연결 예정
 		        if (e.getClickCount() == 2) {
 		            updatehits();
-		            loadAllList();
+		            loadList(row);
 		            int row = table.getSelectedRow();
 		            int col = table.getSelectedColumn();
 		            Object data = table.getValueAt(row, col);
@@ -312,26 +345,28 @@ public class Board extends JFrame {
 		});
 	}
 	
-	public void loadAllList() {
-		rowData.clear();
-		BoardDAO dao = new BoardDAO();
-		ArrayList<BoardVO> list = dao.viewAllList(1);
-		
-		for( BoardVO b :list) {
-			Vector<String> v = new Vector<>();
-			v.add(b.getB_no()+"");
-			v.add(b.getAddress());
-			v.add(b.getCategory());
-			v.add(b.getInterest());
-			v.add(b.getTitle());
-			v.add(b.getDate_board()+"");
-			v.add(b.getAppilcation());
-			v.add(b.getB_cnt()+"");
-			v.add(b.getL_cnt()+"");
-			rowData.add(v);
-		}
-		table.updateUI();
+	public void loadList(int page) {
+	    rowData.clear();
+	    BoardDAO dao = new BoardDAO();
+	    ArrayList<BoardVO> list = dao.viewAllList(page);
+
+	    for(BoardVO b : list) {
+	        Vector<String> v = new Vector<>();
+	        v.add(b.getB_no() + "");
+	        v.add(b.getAddress());
+	        v.add(b.getCategory());
+	        v.add(b.getInterest());
+	        v.add(b.getTitle());
+	        v.add(b.getDate_board() + "");
+	        v.add(b.getAppilcation());
+	        v.add(b.getB_cnt() + "");
+	        v.add(b.getL_cnt() + "");
+	        rowData.add(v);
+	    }
+
+	    table.updateUI();
 	}
+	
 	public void updatehits() {
 	    int row = table.getSelectedRow();
 	    Vector<String> v = rowData.get(row);
