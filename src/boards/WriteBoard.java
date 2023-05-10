@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class WriteBoard extends JFrame {
+	private int row = 1;
     private JLabel title, titleLabel, categoryLabel, contentLabel, applicationLabel, interestLabel;
     private JComboBox<String> categoryComboBox, interestComboBox;
     private JTextField titleField, applyField;
@@ -18,55 +19,55 @@ public class WriteBoard extends JFrame {
     private JButton postButton, cancelButton;
     
     public WriteBoard() {
-        super("ê²Œì‹œê¸€ ì‘ì„±");
-        // ìƒë‹¨ íŒ¨ë„ ìƒì„±
+        super("°Ô½Ã±Û ÀÛ¼º");
+        // »ó´Ü ÆĞ³Î »ı¼º
         JPanel topPanel = new JPanel(new GridLayout(5, 1));
 
-        // íƒ€ì´í‹€ ë ˆì´ë¸”
+        // Å¸ÀÌÆ² ·¹ÀÌºí
         
-        title = new JLabel("  ê²Œì‹œê¸€ ì‘ì„±");
-        title.setFont(new Font("ë§‘ì€ ê³ ë”•", Font.BOLD, 25));
+        title = new JLabel("  °Ô½Ã±Û ÀÛ¼º");
+        title.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 25));
         topPanel.add(title);
         
         
-        // ê²Œì‹œíŒ ì¹´í…Œê³ ë¦¬ ì„ íƒ ì½¤ë³´ë°•ìŠ¤
+        // °Ô½ÃÆÇ Ä«Å×°í¸® ¼±ÅÃ ÄŞº¸¹Ú½º
         JPanel p_top1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel categoryLabel = new JLabel("  ì¹´í…Œê³ ë¦¬  ");
-        categoryLabel.setFont(new Font("ë§‘ì€ ê³ ë”•", Font.BOLD, 15));
-        String[] categoryOptions = {"í•¨ê»˜í•´ìš”", "ë™ë„¤ìƒí™œ"};
+        JLabel categoryLabel = new JLabel("  Ä«Å×°í¸®  ");
+        categoryLabel.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
+        String[] categoryOptions = {"ÇÔ²²ÇØ¿ä", "µ¿³×»ıÈ°"};
         categoryComboBox = new JComboBox<>(categoryOptions);
         p_top1.add(categoryLabel);
         p_top1.add(categoryComboBox);
         topPanel.add(p_top1);
 
         
-        // ê²Œì‹œíŒ ê´€ì‹¬ì‚¬ ì„ íƒ ì½¤ë³´ë°•ìŠ¤
+        // °Ô½ÃÆÇ °ü½É»ç ¼±ÅÃ ÄŞº¸¹Ú½º
         JPanel p_top3 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        interestLabel = new JLabel("  ê´€ì‹¬ì‚¬     ");
-        interestLabel.setFont(new Font("ë§‘ì€ ê³ ë”•", Font.BOLD, 15));
-        String[] interestOptions = {"ê±´ê°•/ìš´ë™","ìŒì‹/ìš”ë¦¬","ì˜í™”/ê³µì—°/ì „ì‹œ","ë¯¸ìˆ /ê³µì˜ˆ","ë…¸ë˜/ìŒì•…","ì¬í…Œí¬","ê¸°íƒ€"};
+        interestLabel = new JLabel("  °ü½É»ç     ");
+        interestLabel.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
+        String[] interestOptions = {"°Ç°­/¿îµ¿","À½½Ä/¿ä¸®","¿µÈ­/°ø¿¬/Àü½Ã","¹Ì¼ú/°ø¿¹","³ë·¡/À½¾Ç","ÀçÅ×Å©","±âÅ¸"};
         interestComboBox = new JComboBox<>(interestOptions);
         p_top3.add(interestLabel);
         p_top3.add(interestComboBox);
         topPanel.add(p_top3);
         
-        // ê²Œì‹œíŒ ì‹ ì²­ì¸ì› ì„ íƒ í•„ë“œ
+        // °Ô½ÃÆÇ ½ÅÃ»ÀÎ¿ø ¼±ÅÃ ÇÊµå
         JPanel p_top5 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        applicationLabel = new JLabel("  ì‹ ì²­ì¸ì›  ");
-        applicationLabel.setFont(new Font("ë§‘ì€ ê³ ë”•", Font.BOLD, 15));
+        applicationLabel = new JLabel("  ½ÅÃ»ÀÎ¿ø  ");
+        applicationLabel.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
         applyField = new JTextField();
         applyField.setPreferredSize(new Dimension(80, 25));
         applyField.setFont(new Font("SansSerif", Font.PLAIN, 15));
        
         p_top5.add(applicationLabel);
         p_top5.add(applyField);
-        p_top5.add(new JLabel("ëª…"));
+        p_top5.add(new JLabel("¸í"));
         topPanel.add(p_top5);
         
-        // ì œëª© ì…ë ¥ í•„ë“œ
+        // Á¦¸ñ ÀÔ·Â ÇÊµå
         JPanel p_top4 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        titleLabel = new JLabel("  ì œëª©        ");
-        titleLabel.setFont(new Font("ë§‘ì€ ê³ ë”•", Font.BOLD, 15));
+        titleLabel = new JLabel("  Á¦¸ñ        ");
+        titleLabel.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
         titleField = new JTextField();
         titleField.setPreferredSize(new Dimension(680, 30));
         titleField.setFont(new Font("SansSerif", Font.PLAIN, 15));
@@ -74,36 +75,36 @@ public class WriteBoard extends JFrame {
         p_top4.add(titleField);
         topPanel.add(p_top4);
 
-        // ìƒë‹¨ íŒ¨ë„ ì¶”ê°€
+        // »ó´Ü ÆĞ³Î Ãß°¡
         add(topPanel, BorderLayout.NORTH);
 
-        // ì¤‘ë‹¨ íŒ¨ë„ ìƒì„±
+        // Áß´Ü ÆĞ³Î »ı¼º
         JPanel middlePanel = new JPanel(new BorderLayout());
 
-        // ë‚´ìš© ì…ë ¥ í•„ë“œ
-        contentLabel = new JLabel("   ë‚´ìš©");
-        contentLabel.setFont(new Font("ë§‘ì€ ê³ ë”•", Font.BOLD, 15));
+        // ³»¿ë ÀÔ·Â ÇÊµå
+        contentLabel = new JLabel("   ³»¿ë");
+        contentLabel.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
         contentArea = new JTextArea();
-        contentArea.setFont(new Font("ë§‘ì€ ê³ ë”•", Font.PLAIN, 15));
+        contentArea.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 15));
         JScrollPane scrollPane = new JScrollPane(contentArea);
         middlePanel.add(contentLabel, BorderLayout.NORTH);
         middlePanel.add(scrollPane, BorderLayout.CENTER);
 
-        // ì¤‘ë‹¨ íŒ¨ë„ ì¶”ê°€
+        // Áß´Ü ÆĞ³Î Ãß°¡
         add(middlePanel, BorderLayout.CENTER);
 
-        // í•˜ë‹¨ íŒ¨ë„ ìƒì„±
+        // ÇÏ´Ü ÆĞ³Î »ı¼º
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         
-        // ì‘ì„± ì™„ë£Œ ë²„íŠ¼
-        postButton = new JButton("ì‘ì„±");
+        // ÀÛ¼º ¿Ï·á ¹öÆ°
+        postButton = new JButton("ÀÛ¼º");
         bottomPanel.add(postButton);
         
-        // ì‘ì„± ì·¨ì†Œ ë²„íŠ¼
-        cancelButton = new JButton("ì·¨ì†Œ");
+        // ÀÛ¼º Ãë¼Ò ¹öÆ°
+        cancelButton = new JButton("Ãë¼Ò");
         bottomPanel.add(cancelButton);
 
-        // í•˜ë‹¨ íŒ¨ë„ ì¶”ê°€
+        // ÇÏ´Ü ÆĞ³Î Ãß°¡
         add(bottomPanel, BorderLayout.SOUTH);
         
        
@@ -111,7 +112,7 @@ public class WriteBoard extends JFrame {
 		setSize(800, 700);
         setLocationRelativeTo(null);
         setResizable(false);
- //ê²Œì‹œê¸€ ì¶”ê°€ (ìˆ˜ì •)..   
+        //°Ô½Ã±Û Ãß°¡
         postButton.addActionListener(new ActionListener() {
         	
 			@Override
@@ -132,13 +133,16 @@ public class WriteBoard extends JFrame {
 				    vo.setAppilcation(apply);
 				    int re = dao.insertBoard(vo);
 				    if (re > 0) {
-				        JOptionPane.showMessageDialog(null, "ê²Œì‹œê¸€ì´ ë“±ë¡ë˜ì—ˆìŠµë‹ˆë‹¤.");
+				        JOptionPane.showMessageDialog(null, "°Ô½Ã±ÛÀÌ µî·ÏµÇ¾ú½À´Ï´Ù.");
+				        Board boardpage = new Board();
+				        boardpage.loadList(row);
+				        dispose();
 				    } else {
-				        JOptionPane.showMessageDialog(null, "ê²Œì‹œê¸€ ë“±ë¡ì— ì‹¤íŒ¨í•˜ì˜€ìŠµë‹ˆë‹¤.");
+				        JOptionPane.showMessageDialog(null, "°Ô½Ã±Û µî·Ï¿¡ ½ÇÆĞÇÏ¿´½À´Ï´Ù.");
 				    }
 				} catch (Exception ex) {
 				    ex.printStackTrace();
-				    JOptionPane.showMessageDialog(null, "ê²Œì‹œê¸€ ë“±ë¡ ì¤‘ ì˜ˆì™¸ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤.");
+				    JOptionPane.showMessageDialog(null, "°Ô½Ã±Û µî·Ï Áß ¿¹¿Ü°¡ ¹ß»ıÇÏ¿´½À´Ï´Ù.");
 				}
 			}
 		});
@@ -156,5 +160,3 @@ public class WriteBoard extends JFrame {
         new WriteBoard();
     }
 } 
-
-
