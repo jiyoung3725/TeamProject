@@ -25,123 +25,83 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import customer.MainTest;
+import customer.Qna_List;
 import dao.AdminDAO;
 import dao.UserDAO;
+import utillist.Utils;
 
 public class Admin extends JFrame implements MouseListener{
-	Vector<String> colNames_report;
-	Vector<Vector<String>> rowData_report;
-	JTable table_report;
-	Vector<String> colNames_user;
-	Vector<Vector<String>> rowData_user;
-	JTable table_user;
-	Vector<String> colNames_qna;
-	Vector<Vector<String>> rowData_qna;
-	JTable table_qna;
-	ArrayList<HashMap<String, Object>> list;
-	JTextField jtf_r_title;
-	JTextArea jta_r_content;
-	JTextArea jta_r_b_content;
-	JTextField jtf_q_title;
-	JTextArea jta_q_content;
-	JTextArea jta_a_content;
+	private Vector<String> colNames_report;
+	private Vector<Vector<String>> rowData_report;
+	private JTable table_report;
+	private Vector<String> colNames_user;
+	private Vector<Vector<String>> rowData_user;
+	private JTable table_user;
+	private Vector<String> colNames_qna;
+	private Vector<Vector<String>> rowData_qna;
+	private JTable table_qna;
+	private ArrayList<HashMap<String, Object>> list;
+	private JTextField jtf_r_title;
+	private JTextArea jta_r_content;
+	private JTextArea jta_r_b_content;
+	private JTextField jtf_q_title;
+	private JTextArea jta_q_content;
+	private JTextArea jta_a_content;
 	public Admin() {
-		// ì‹ ê³  ê²Œì‹œê¸€ í…Œì´ë¸” ìƒì„±
+		// ½Å°í °Ô½Ã±Û Å×ÀÌºí »ı¼º
 		colNames_report = new Vector<String>();
-		String[] arr_report = {"ì‹ ê³  ë²ˆí˜¸", "ì‹ ê³ ì¼", "ì‹ ê³  ë‚´ìš©", "ì‹ ê³ ì", "ê²Œì‹œê¸€ ë²ˆí˜¸", "ì²˜ë¦¬ ìƒíƒœ"};
-		for(String s:arr_report) {
-			colNames_report.add(s);
-		}
+		String[] arr_report = {"½Å°í ¹øÈ£", "½Å°íÀÏ", "½Å°í ³»¿ë", "½Å°íÀÚ", "°Ô½Ã±Û ¹øÈ£", "Ã³¸® »óÅÂ"};
 		rowData_report = new Vector<Vector<String>>();
-		table_report = new JTable(rowData_report, colNames_report);
+		table_report = Utils.makeJTable(arr_report, rowData_report, colNames_report);
 		loadReportedBoard();
 		table_report.addMouseListener(this);
 		JScrollPane jsp_report = new JScrollPane(table_report);
 		
-		// ì‹ ê³  ê²Œì‹œê¸€ ìƒì„¸ ë‚´ì—­ 
+		// ½Å°í °Ô½Ã±Û »ó¼¼ ³»¿ª 
 		jtf_r_title = new JTextField(20);
+		jtf_r_title.setText("Á¦¸ñ");
 		jtf_r_title.setEnabled(true);
 		jta_r_content = new JTextArea();
 		jta_r_content.setEnabled(true);
 		jta_r_b_content = new JTextArea();
 		jta_r_b_content.setEnabled(true);
-		JButton btn_report = new JButton("ê²Œì‹œê¸€ ì‚­ì œ");
+		JButton btn_report = new JButton("°Ô½Ã±Û »èÁ¦");
 		JPanel pan_detail_report = new JPanel();
 		pan_detail_report.setLayout(new BoxLayout(pan_detail_report, BoxLayout.Y_AXIS));
-		pan_detail_report.add(new JLabel("ì‹ ê³  ë‚´ìš© : "));
+		pan_detail_report.add(new JLabel("½Å°í ³»¿ë : "));
 		pan_detail_report.add(jta_r_content);
 		pan_detail_report.add(Box.createRigidArea(new Dimension(0, 10)));
-		pan_detail_report.add(new JLabel("ì‹ ê³ ëœ ê²Œì‹œê¸€ : "));
+		pan_detail_report.add(new JLabel("½Å°íµÈ °Ô½Ã±Û : "));
 		pan_detail_report.add(jtf_r_title);
-		pan_detail_report.add(jta_r_b_content);
+		pan_detail_report.add(new JScrollPane(jta_r_b_content));
 		pan_detail_report.add(Box.createRigidArea(new Dimension(0, 10)));
 		pan_detail_report.add(btn_report);
 		
-		// ì‹ ê³  ë‚´ì—­ panel ìƒì„±
+		// ½Å°í ³»¿ª panel »ı¼º
 		JPanel pan_report = new JPanel(new GridLayout(2,1));
 		pan_report.add(jsp_report);
 		pan_report.add(pan_detail_report);
 		
 		
-		// ë¬¸ì˜ ë‚´ì—­ í…Œì´ë¸” ìƒì„±
-		colNames_qna = new Vector<String>();
-		String[] arr_qna = {"ë¬¸ì˜ ë²ˆí˜¸", "ë¬¸ì˜ ìœ í˜•","ì œëª©", "ìƒíƒœ", "ë¬¸ì˜ ì¼ì"};
-		for(String s:arr_qna) {
-			colNames_qna.add(s);
-		}
-		rowData_qna = new Vector<Vector<String>>();
-		table_qna = new JTable(rowData_qna, colNames_qna);
-//		loadQna();
-		table_qna.addMouseListener(this);
-		JScrollPane jsp_qna = new JScrollPane(table_qna);
-		// ë¬¸ì˜ ë‚´ì—­ì„ ë³´ì—¬ì£¼ëŠ” panel ìƒì„±
-		JPanel pan_detail_qna = new JPanel();
-		pan_detail_qna.setLayout(new BoxLayout(pan_detail_qna, BoxLayout.Y_AXIS));
-		jtf_q_title = new JTextField(20);
-		jta_q_content = new JTextArea(10,10);
-		jta_a_content = new JTextArea(10,10);
-		pan_detail_qna.add(Box.createRigidArea(new Dimension(0,10)));
-		pan_detail_qna.add(new JLabel("ì œëª©"));
-		pan_detail_qna.add(jtf_q_title);
-		pan_detail_qna.add(Box.createRigidArea(new Dimension(0,10)));
-		pan_detail_qna.add(new JLabel("ë‚´ìš©"));
-		pan_detail_qna.add(new JScrollPane(jta_q_content));
-		pan_detail_qna.add(Box.createRigidArea(new Dimension(0,10)));
-		// ë‹µë³€ì„ ì…ë ¥í•˜ëŠ” panel ìƒì„±
-		JPanel pan_answer = new JPanel();
-		pan_answer.setLayout(new BoxLayout(pan_answer, BoxLayout.Y_AXIS));
-		pan_answer.add(Box.createRigidArea(new Dimension(0,10)));
-		pan_answer.add(new JLabel("ë‹µë³€"));
-		pan_answer.add(new JScrollPane(jta_a_content));
-		pan_answer.add(Box.createRigidArea(new Dimension(0,10)));
-		JButton btn_answer = new JButton("ë‹µë³€í•˜ê¸°");
-		pan_answer.add(btn_answer);
-		pan_answer.add(Box.createRigidArea(new Dimension(0,10)));
-		
-		// ë¬¸ì˜ë‚´ì—­ panel ìƒì„±
-		JPanel pan_qna = new JPanel(new GridLayout(1,3));
-		pan_qna.add(jsp_qna);
-		pan_qna.add(pan_detail_qna);
-		pan_qna.add(pan_answer);
+		// ¹®ÀÇ ³»¿ª ºÒ·¯¿À±â
+		JPanel pan_qna  = new admin.MainTest();
 		
 		
-		// íšŒì› ëª©ë¡ í…Œì´ë¸” ìƒì„±
+		// È¸¿ø ¸ñ·Ï Å×ÀÌºí »ı¼º
 		colNames_user = new Vector<String>();
-		String[] arr_user = {"íšŒì› ë²ˆí˜¸", "íšŒì› ì•„ì´ë””","íšŒì› ì´ë¦„", "ê°€ì…ì¼ì", "ì‹ ê³  íšŸìˆ˜"};
-		for(String s:arr_user) {
-			colNames_user.add(s);
-		}
+		String[] arr_user = {"È¸¿ø ¹øÈ£", "È¸¿ø ¾ÆÀÌµğ","È¸¿ø ÀÌ¸§", "°¡ÀÔÀÏÀÚ", "½Å°í È½¼ö"};
 		rowData_user = new Vector<Vector<String>>();
-		table_user = new JTable(rowData_user, colNames_user);
+		table_user = Utils.makeJTable(arr_user, rowData_user, colNames_user);
 		loadUser();
 		table_user.addMouseListener(this);
 		JScrollPane jsp_user = new JScrollPane(table_user);
 		
 		
 		JTabbedPane tab_admin = new JTabbedPane();
-		tab_admin.add("ì‹ ê³  ë‚´ì—­", pan_report);
-		tab_admin.add("ë¬¸ì˜ ë‚´ì—­", pan_qna);
-		tab_admin.add("íšŒì› ê´€ë¦¬", jsp_user);
+		tab_admin.add("½Å°í ³»¿ª", pan_report);
+		tab_admin.add("¹®ÀÇ ³»¿ª", pan_qna);
+		tab_admin.add("È¸¿ø °ü¸®", jsp_user);
 		add(tab_admin);
 		setSize(900, 650);
 		setVisible(true);
@@ -151,28 +111,18 @@ public class Admin extends JFrame implements MouseListener{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(JOptionPane.showConfirmDialog(null, "ì •ë§ ê²Œì‹œê¸€ì„ ì‚­ì œí•˜ì‹œê² ìŠµë‹ˆê¹Œ?")!=JOptionPane.OK_OPTION) return;
+				if(JOptionPane.showConfirmDialog(null, "Á¤¸» °Ô½Ã±ÛÀ» »èÁ¦ÇÏ½Ã°Ú½À´Ï±î?")!=JOptionPane.OK_OPTION) return;
 				int row = table_report.getSelectedRow();
 				int r_no = Integer.parseInt((String)table_report.getValueAt(row, 0));
 				int re = new AdminDAO().updateReports(r_no);
 				if(re==-1) {
-					JOptionPane.showMessageDialog(null, "ê²Œì‹œê¸€ì´ ì‚­ì œë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
+					JOptionPane.showMessageDialog(null, "°Ô½Ã±ÛÀÌ »èÁ¦µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
 					return;
 				}
-				JOptionPane.showMessageDialog(null, "ê²Œì‹œê¸€ì´ ë˜ì—ˆìŠµë‹ˆë‹¤.");
+				JOptionPane.showMessageDialog(null, "°Ô½Ã±ÛÀÌ µÇ¾ú½À´Ï´Ù.");
 				loadReportedBoard();
 			}
 		});
-		
-	}
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 	@Override
@@ -182,11 +132,11 @@ public class Admin extends JFrame implements MouseListener{
 			int row = table_user.getSelectedRow();
 			int NO	= Integer.parseInt((String) table_user.getValueAt(row, 0));
 			String name = (String)table_user.getValueAt(row, 2);
-			int re = JOptionPane.showConfirmDialog(null, name+"ë‹˜ì„ ì‚­ì œí•˜ì‹œê² ìŠµë‹ˆê¹Œ?");
+			int re = JOptionPane.showConfirmDialog(null, name+"´ÔÀ» »èÁ¦ÇÏ½Ã°Ú½À´Ï±î?");
 			if(re!=JOptionPane.OK_OPTION) return;
 			re = new AdminDAO().deleteUser(NO);
-			if(re==-1) JOptionPane.showMessageDialog(null, "íšŒì› ì‚­ì œì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
-			else JOptionPane.showMessageDialog(null, "íšŒì›ì„ ì‚­ì œí–ˆìŠµë‹ˆë‹¤.");
+			if(re==-1) JOptionPane.showMessageDialog(null, "È¸¿ø »èÁ¦¿¡ ½ÇÆĞÇß½À´Ï´Ù.");
+			else JOptionPane.showMessageDialog(null, "È¸¿øÀ» »èÁ¦Çß½À´Ï´Ù.");
 			loadUser();
 		} else if(e.getSource()==table_report) {
 			loadReportedBoard();
@@ -199,6 +149,12 @@ public class Admin extends JFrame implements MouseListener{
 			jtf_r_title.setText((String)map.get("b_title"));
 			
 		}
+	}
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	}
+	@Override
+	public void mousePressed(MouseEvent e) {
 	}
 	@Override
 	public void mouseEntered(MouseEvent e) {
