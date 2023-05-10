@@ -3,8 +3,10 @@ package boards;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.Console;
@@ -30,11 +32,16 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 
+import Post.postShow;
 import dao.BoardDAO;
 import vo.BoardVO;
 //수정 예정
 public class Board extends JFrame {
 	int row = 1;
+	int totalCount;
+	int totalPages;
+	int currentPage;
+	int pagesize = 10;
 	JTextField jtf_search;
 	JComboBox<String> jcb_option;	//같이해요, 우리동네 선택
 	String []interest = {"건강/운동","음식/요리","영화/공연/전시","미술/공예","노래/음악","재테크","기타"};
@@ -45,8 +52,14 @@ public class Board extends JFrame {
 	JRadioButton jrb_option1;
 	JRadioButton jrb_option2;
 	ArrayList<BoardVO> list;
+	postShow pR;	//게시글 읽어오는 객체
+	
+	public static int postNum;	//선택된 게시글
 		
 	public Board() {
+		BoardDAO dao = new BoardDAO();
+		list = dao.viewAllList(1);
+		
 		JPanel p_main = new JPanel();	//게시판 메인 화면
 		p_main.setLayout(new BorderLayout());
 		JPanel p_search1 = new JPanel();	//검색창 전체 패널
@@ -103,8 +116,7 @@ public class Board extends JFrame {
 			                data += jcb[j].getText();
 			            }
 			        }
-			        BoardDAO dao = new BoardDAO();
-			        ArrayList<BoardVO> list = dao.interestList(data);
+			        list = dao.interestList(data);
 			        for (BoardVO b : list) {
 			            Vector<String> v = new Vector<>();
 			            v.add(b.getB_no() + "");
@@ -149,56 +161,34 @@ public class Board extends JFrame {
 		table.setRowHeight(50);
 		p_main.add(jsp, BorderLayout.CENTER);
 		
-		JButton btn_pre = new JButton("이전");
-		JLabel jlb_page = new JLabel("page");	
-		JButton btn_post = new JButton("다음");
-		p_etc2.add(btn_pre);
-		p_etc2.add(jlb_page);
-		p_etc2.add(btn_post);
-		
 		JButton btn_write = new JButton("게시글 작성");
 		p_etc3.add(btn_write);
 		p_main.add(p_etc, BorderLayout.SOUTH);
 		add(p_main);
 		
 		loadList(row); 
+		for(int i =1; i<=totalPages+1; i++) {
+			JButton btn = new JButton(i+" ");
+			btn.setBorder(null);
+			
+			p_etc2.add(btn);
+			
+			btn.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					int page = Integer.parseInt(e.getActionCommand().trim());
+					loadList(page);
+				}
+			});
+		}
+		
 		setTitle("커뮤니티 게시판");
 		setSize(800, 707);
-		 setLocationRelativeTo(null);
+		setLocationRelativeTo(null);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		
-		// 게시글 이전 버튼 
-		btn_pre.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(row == 0) {
-					JOptionPane.showMessageDialog(null, "첫 페이지 입니다.");
-				}else {
-					row--;
-					loadList(row);
-				}
-			}
-		});
-		
-		
-		// 게시글 다음 버튼
-		btn_post.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(row == rowData.size()-1) {
-					JOptionPane.showMessageDialog(null, "마지막 페이지 입니다.");
-				}else {
-					row++;
-					loadList(row);
-				}
-				
-			}
-		});
-		
+	
 		// 게시글 작성 버튼
 		btn_write.addActionListener(new ActionListener() {
 			
@@ -215,7 +205,6 @@ public class Board extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				loadList(row);
-				
 			}
 		});
 		
@@ -229,16 +218,16 @@ public class Board extends JFrame {
 				String search = jtf_search.getText();
 				String category = (String) jcb_option.getSelectedItem();
 				
-				ArrayList<BoardVO> list = dao.SearchList(search);
+				 list = dao.SearchList(search);
 				
 				if (jrb_option2.isSelected()) {
-				list = dao.dateSearchList(search);
+					list = dao.dateSearchList(search);
 				}
 				if (jrb_option1.isSelected()) {
-				list = dao.likedSearchList(search);
+					list = dao.likedSearchList(search);
 				}
 				if (jcb_option.getSelectedItem() != null) {
-				list = dao.categorySearchList(search, category);
+					list = dao.categorySearchList(search, category);
 				}
 				
 				for( BoardVO b :list) {
@@ -257,64 +246,76 @@ public class Board extends JFrame {
 				table.updateUI();
 			}
 		});
-		
-		//라디오 버튼 인기순 정렬
-		jrb_option1.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				rowData.clear();
-				if(jrb_option1.isSelected()) {
-					BoardDAO dao = new BoardDAO();
-					ArrayList<BoardVO> list = dao.viewLikedList();
+				//라디오 버튼 인기순 정렬
+				jrb_option1.addActionListener(new ActionListener() {
 					
-					for( BoardVO b :list) {
-						Vector<String> v = new Vector<>();
-						v.add(b.getB_no()+"");
-						v.add(b.getAddress());
-						v.add(b.getCategory());
-						v.add(b.getInterest());
-						v.add(b.getTitle());
-						v.add(b.getDate_board()+"");
-						v.add(b.getAppilcation());
-						v.add(b.getB_cnt()+"");
-						v.add(b.getL_cnt()+"");
-						rowData.add(v);
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						rowData.clear();
+						if(jrb_option1.isSelected()) {
+							BoardDAO dao = new BoardDAO();
+							ArrayList<BoardVO> list = dao.viewLikedList();
+							
+							for( BoardVO b :list) {
+								Vector<String> v = new Vector<>();
+								v.add(b.getB_no()+"");
+								v.add(b.getAddress());
+								v.add(b.getCategory());
+								v.add(b.getInterest());
+								v.add(b.getTitle());
+								v.add(b.getDate_board()+"");
+								v.add(b.getAppilcation());
+								v.add(b.getB_cnt()+"");
+								v.add(b.getL_cnt()+"");
+								rowData.add(v);
+							}
+							table.updateUI();
+						}
 					}
-					table.updateUI();
-				}
-			}
-		});
-		
-		//라디오 버튼 최신순 정렬
-		jrb_option2.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				rowData.clear();
-				if(jrb_option2.isSelected()) {
-					BoardDAO dao = new BoardDAO();
-					ArrayList<BoardVO> list = dao.viewNewestList();
-					for( BoardVO b :list) {
-						Vector<String> v = new Vector<>();
-						v.add(b.getB_no()+"");
-						v.add(b.getAddress());
-						v.add(b.getCategory());
-						v.add(b.getInterest());
-						v.add(b.getTitle());
-						v.add(b.getDate_board()+"");
-						v.add(b.getAppilcation());
-						v.add(b.getB_cnt()+"");
-						v.add(b.getL_cnt()+"");
-						rowData.add(v);
+				});
+				
+				//라디오 버튼 최신순 정렬
+				jrb_option2.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						rowData.clear();
+						if(jrb_option2.isSelected()) {
+							BoardDAO dao = new BoardDAO();
+							ArrayList<BoardVO> list = dao.viewNewestList();
+							for( BoardVO b :list) {
+								Vector<String> v = new Vector<>();
+								v.add(b.getB_no()+"");
+								v.add(b.getAddress());
+								v.add(b.getCategory());
+								v.add(b.getInterest());
+								v.add(b.getTitle());
+								v.add(b.getDate_board()+"");
+								v.add(b.getAppilcation());
+								v.add(b.getB_cnt()+"");
+								v.add(b.getL_cnt()+"");
+								rowData.add(v);
+							}
+							table.updateUI();
+						}
 					}
-					table.updateUI();
-				}
-			}
-		});
-		
-		// 글을 더블클릭 시 상세페이지로 연결
-		table.addMouseListener(new MouseListener() {
+				});
+				
+				//게시글 더블클릭시 게시글 상세페이지 팝업(수진_0508추가)
+				table.addMouseListener(new MouseAdapter() {
+				public void mousePressed(MouseEvent mouseEvent) {
+				JTable table = (JTable)mouseEvent.getSource();
+				Point point = mouseEvent.getPoint();
+				int idx = table.rowAtPoint(point);
+				if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
+				postNum = Integer.parseInt(rowData.get(idx).get(0));
+				pR = new postShow(postNum);	
+						}
+					}
+					
+				});
+
+			table.addMouseListener(new MouseListener() {
 
 		    @Override
 		    public void mouseReleased(MouseEvent e) {
@@ -325,12 +326,9 @@ public class Board extends JFrame {
 		        // 상세페이지로 연결 예정
 		        if (e.getClickCount() == 2) {
 		            updatehits();
-		            loadList(row);
-		            int row = table.getSelectedRow();
-		            int col = table.getSelectedColumn();
-		            Object data = table.getValueAt(row, col);
-		            Liked likedpage = new Liked();
-		            likedpage.setVisible(true);
+		            BoardDAO dao = new BoardDAO();
+		    		list = dao.viewAllList(1);
+		            loadList(currentPage);
 		        }
 		    }
 		    @Override
@@ -347,10 +345,17 @@ public class Board extends JFrame {
 	
 	public void loadList(int page) {
 	    rowData.clear();
-	    BoardDAO dao = new BoardDAO();
-	    ArrayList<BoardVO> list = dao.viewAllList(page);
-
-	    for(BoardVO b : list) {
+	    totalCount = list.size(); // 전체 게시글 수 가져오기
+		totalPages = (int) Math.ceil(totalCount / pagesize); // 총 페이지 수 계산
+		currentPage = page;
+		int start = (currentPage -1)*pagesize;
+		int end = start + pagesize;
+		if (end > totalCount) { // 끝 인덱스가 전체 게시글 수보다 크면
+		    end = totalCount; // 끝 인덱스를 전체 게시글 수로 설정
+		}
+	   
+	    for(int i=start; i<end; i++) {
+	    	BoardVO b = list.get(i);
 	        Vector<String> v = new Vector<>();
 	        v.add(b.getB_no() + "");
 	        v.add(b.getAddress());
@@ -366,7 +371,7 @@ public class Board extends JFrame {
 
 	    table.updateUI();
 	}
-	
+
 	public void updatehits() {
 	    int row = table.getSelectedRow();
 	    Vector<String> v = rowData.get(row);
