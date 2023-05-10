@@ -1,5 +1,6 @@
 package customer;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -8,42 +9,64 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
 
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
-import com.sist.dao.QnaDAO;
-
-import com.sist.vo.QnAVo;
+import dao.QnaDAO;
+import first.LogInPage;
+import vo.QnAVo;
 
 
 public class Qna_List extends JPanel {
 	  JTable table;
 	   Vector<String> colNames;
 	   Vector<Vector<String>> rowData;
+	   JButton btn;
 	   private int row;
-	  
 	public Qna_List() {
+		btn = new JButton("»èÁ¦");
 		
 		rowData = new Vector<Vector<String>>();
 		colNames = new Vector<String>();
-		colNames.add("ë¬¸ì˜ë²ˆí˜¸");
-		colNames.add("ë¬¸ì˜ìœ í˜•");
-		colNames.add("ë¬¸ì˜ì œëª©");
-		colNames.add("ì‘ì„±ì¼");
-		colNames.add("ì²˜ë¦¬ìƒíƒœ");
-		colNames.add("ë‹µë³€ì¼");
-
+		colNames.add("¹®ÀÇ¹øÈ£");
+		colNames.add("¹®ÀÇÀ¯Çü");
+		colNames.add("¹®ÀÇÁ¦¸ñ");
+		colNames.add("ÀÛ¼ºÀÏ");
+		colNames.add("Ã³¸®»óÅÂ");
+		colNames.add("´äº¯ÀÏ");
 		table = new JTable(rowData, colNames);
 		JScrollPane jsp = new JScrollPane(table);
-		add(jsp);
-		
+		JPanel p =new JPanel();
+		p.setLayout(new BorderLayout());
+		p.add(jsp, BorderLayout.CENTER);
+		p.add(btn,BorderLayout.SOUTH);
+		add(p);
+	
 	
 		setSize(700,500);
 		setVisible(true);
 		loadData();
 		
+		btn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int i = 0;
+				int row = table.getSelectedRow();
+				int no = Integer.parseInt((String)table.getValueAt(row, 0));
+				int re = new QnaDAO().deleteList(no);
+				if(re==1) {
+					JOptionPane.showMessageDialog(null, "»èÁ¦µÇ¾ú½À´Ï´Ù.");
+					loadData();
+				}else {
+					System.out.println("¿À·ù");
+				}
+			}
+		});
 		table.addMouseListener(new MouseListener() {
 			
 			@Override
@@ -60,14 +83,13 @@ public class Qna_List extends JPanel {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 			}
-			//<ì„ íƒí•œ rowDataì— í•´ë‹¹í•˜ëŠ” ë°ì´í„°ë¥¼ íŒì—…ìœ¼ë¡œ ë„ìš°ê¸°>
+			//<¼±ÅÃÇÑ rowData¿¡ ÇØ´çÇÏ´Â µ¥ÀÌÅÍ¸¦ ÆË¾÷À¸·Î ¶ç¿ì±â>
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				row = table.getSelectedRow();
 				Vector<String> v = rowData.get(row);
 				 ListPopUp p = new ListPopUp();
-				 
-				 //<ì €ì¥ë˜ì–´ìˆëŠ” ê´€ë¦¬ìë‹µë³€ì„ ëŒ“ê¸€ì°½(jta)ì— ë¶ˆëŸ¬ì˜¤ëŠ” sqlë¬¸ í˜¸ì¶œ>
+				 //<ÀúÀåµÇ¾îÀÖ´Â °ü¸®ÀÚ´äº¯À» ´ñ±ÛÃ¢(jta)¿¡ ºÒ·¯¿À´Â sql¹® È£Ãâ>
 				 int no = row+1;
 				 QnaDAO dao = new QnaDAO();
 				 ArrayList<QnAVo> list = dao.searchAnswer(no);
@@ -77,27 +99,28 @@ public class Qna_List extends JPanel {
 					 p.jta.repaint();
 				 }
 				
-				 //<ListPopUpê°ì²´ ìƒì„± í›„ 'ë“±ë¡'ë²„íŠ¼ì„ ëˆŒë €ì„ ë•Œ ë‹µë³€ì„ ë“±ë¡í•˜ëŠ” í´ë˜ìŠ¤>	
-					// listPopUpí´ë˜ìŠ¤ì—ì„œëŠ” rowê°’ì„ ê°€ì ¸ì˜¬ ìˆ˜ ì—†ì–´ì„œ ì—¬ê¸°ì— ë„£ìŒ.
+				 //<ListPopUp°´Ã¼ »ı¼º ÈÄ 'µî·Ï'¹öÆ°À» ´­·¶À» ¶§ ´äº¯À» µî·ÏÇÏ´Â Å¬·¡½º>	
+					// listPopUpÅ¬·¡½º¿¡¼­´Â row°ªÀ» °¡Á®¿Ã ¼ö ¾ø¾î¼­ ¿©±â¿¡ ³ÖÀ½.
 				p.btn_add.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						int q_no = row+1;
+						int row = table.getSelectedRow();
+						int q_no = Integer.parseInt((String)table.getValueAt(row, 0));
 						String content = p.answer.getText();
-						QnAVo q = new QnAVo();
-						QnaDAO dao = new QnaDAO();
-						int re = dao.addAnswer(content, q_no);
-						if(re==1) {
-							JOptionPane.showMessageDialog(null, "ë‹µë³€ì´ ë“±ë¡ë˜ì—ˆìŠµë‹ˆë‹¤");
+						int u_no = LogInPage.getNO();
+						int re = new QnaDAO().addAnswer(content, q_no, u_no);
+						if(u_no==0) {	
+							JOptionPane.showMessageDialog(null, "´äº¯ÀÌ µî·ÏµÇ¾ú½À´Ï´Ù");
 							p.jta.setText(content);
 							p.jta.repaint();
 							p.answer.setText("");
-							
-							//<q_status ë³€ê²½í•˜ëŠ” sqlë¬¸ í˜¸ì¶œ>
-							int no = row+1;
+							//<q_status º¯°æÇÏ´Â sql¹® È£Ãâ>
 							QnaDAO Dao = new QnaDAO();
-							int r = dao.updateStatus(no);
+							int r = dao.updateStatus(q_no);
 							loadData();
+						}else{
+							JOptionPane.showMessageDialog(null, "°ü¸®ÀÚ¸¸ ÀÔ·ÂÇÒ ¼ö ÀÖ½À´Ï´Ù");
+							
 						}
 					}
 			
@@ -106,10 +129,11 @@ public class Qna_List extends JPanel {
 			}
 		});
 	}
-	//Jtableì˜ rowDataì— ê°’ ë„ìš°ê¸°
+	//JtableÀÇ rowData¿¡ °ª ¶ç¿ì±â
 	public void loadData() {
 		rowData.clear();
-		
+		int no = LogInPage.getNO();
+		if(no==0) {
 		QnaDAO dao = new QnaDAO();
 		ArrayList<QnAVo> list = dao.addList();
 		for(QnAVo v : list) {
@@ -123,6 +147,22 @@ public class Qna_List extends JPanel {
 			rowData.add(c);
 			
 		}table.updateUI();
+		return;
+		}else if(no!=0){
+			QnaDAO dao = new QnaDAO();
+			ArrayList<QnAVo> list = dao.addList(no);
+			for(QnAVo v : list) {
+				Vector<String> c = new Vector<String>();
+				c.add(v.getQ_no()+"");
+				c.add(v.getQ_type());
+				c.add(v.getQ_title());
+				c.add(v.getQ_inquirdate()+"");
+				c.add(v.getQ_status());
+				c.add(v.getA_date()+"");
+				rowData.add(c);
+				
+			}table.updateUI();
+		}
 		
 	}	
 

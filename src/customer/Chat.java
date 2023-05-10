@@ -11,6 +11,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -38,8 +40,8 @@ public class Chat extends JFrame {
 	JTextField jtf;
 	JTextArea jta;
 	Socket socket;
-	InputStream is;
-	OutputStream os;
+	DataInputStream is;
+	DataOutputStream os;
 	JFrame f;
 	
 	public Chat() {		
@@ -49,12 +51,12 @@ public class Chat extends JFrame {
 		jta.setEditable(false);
 		JScrollPane jsp = new JScrollPane(jta);
 		jta.setEditable(false);
-		JLabel label = new JLabel("1:1 ì±„íŒ…ìƒë‹´");
-		label.setFont(new Font("ë§‘ì€ê³ ë”•", getFont().BOLD, 15));
+		JLabel label = new JLabel("1:1 Ã¤ÆÃ»ó´ã");
+		label.setFont(new Font("¸¼Àº°íµñ", getFont().BOLD, 15));
 		JPanel p  = new JPanel();
 		p.setLayout(new BorderLayout());
-		JButton btn_send = new JButton("ì „ì†¡");
-		JButton btn_exit = new JButton("ì¢…ë£Œ");
+		JButton btn_send = new JButton("Àü¼Û");
+		JButton btn_exit = new JButton("Á¾·á");
 		
 		JPanel p_btn = new JPanel();
 		p_btn.add(btn_send);
@@ -74,27 +76,26 @@ public class Chat extends JFrame {
 		add(jsp, BorderLayout.CENTER);
 		add(p, BorderLayout.SOUTH);
 		
-		//ì†Œì¼“ ì—°ê²°
+		//¼ÒÄÏ ¿¬°á
 		try {
 			socket = new Socket("localhost",9003);
-			jta.append("***ìƒë‹´ì‚¬ê°€ ì—°ê²°ë˜ì—ˆìŠµë‹ˆë‹¤***\n");
+			jta.append("***»ó´ã»ç°¡ ¿¬°áµÇ¾ú½À´Ï´Ù***\n");
 			
-			is = socket.getInputStream();
-			os = socket.getOutputStream();			
+			is = new DataInputStream(socket.getInputStream());
+			os = new DataOutputStream( socket.getOutputStream());			
 		}catch (Exception e) {
-			System.out.println("ì˜ˆì™¸ë°œìƒ:"+e.getMessage());
+			System.out.println("¿¹¿Ü¹ß»ı:"+e.getMessage());
 		}
-		setTitle("í•˜ë¹„íƒ€ìš´ ì‹¤ì‹œê°„ ì±„íŒ…ìƒë‹´ì„¼í„°");
+		setTitle("ÇÏºñÅ¸¿î ½Ç½Ã°£ Ã¤ÆÃ»ó´ã¼¾ÅÍ");
 		setSize(450, 600);
 		setVisible(true);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		btn_exit.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				System.exit(0);
+				dispose();
 			}
 		});
 		
@@ -102,34 +103,31 @@ public class Chat extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String msg = jtf.getText();				
-				byte []data = msg.getBytes();
 				try {
-					os.write(data);	
-					jta.append("ìœ ì € :" +msg+"\n");
+					os.writeUTF(msg);
+					os.flush();
+					jta.append("À¯Àú :" +msg+"\n");
 					jtf.setText("");
-					if(msg.equals("ì¢…ë£Œ")) {
-						jta.append("***ì±„íŒ…ë°©ì„ ë‚˜ê°‘ë‹ˆë‹¤.***");
+					if(msg.equals("Á¾·á")) {
+						jta.append("***Ã¤ÆÃ¹æÀ» ³ª°©´Ï´Ù.***");
 					}
 				}catch (Exception ex) {
-					System.out.println("ì˜ˆì™¸ë°œìƒ:"+ex.getMessage());
+					System.out.println("¿¹¿Ü¹ß»ı:"+ex.getMessage());
 				}
 				
 			}
 		});
 		
-		//ì„œë²„ë¡œ ë¶€í„° ìˆ˜ì‹ ë˜ëŠ” ë°ì´í„° ë°›ê¸° 
+		//¼­¹ö·Î ºÎÅÍ ¼ö½ÅµÇ´Â µ¥ÀÌÅÍ ¹Ş±â 
 		class ClientThread extends Thread{
 		
 			public void run() {
-				byte []data = new byte[100];
 				while(true) {
 					try {
-						is.read(data);
-						String msg = new String(data);
-						jta.append("í•˜ë¹„íƒ€ìš´ ì±„íŒ…ìƒë‹´ì„¼í„° :"+msg+"\n");
-						Arrays.fill(data, (byte)0);
+						String msg = is.readUTF();
+						jta.append("ÇÏºñÅ¸¿î Ã¤ÆÃ»ó´ã¼¾ÅÍ :"+msg+"\n");
 					}catch (Exception e) {
-						System.out.println("ì˜ˆì™¸ë°œìƒ:"+e.getMessage());
+						System.out.println("¿¹¿Ü¹ß»ı:"+e.getMessage());
 					}
 				}
 			}
@@ -137,8 +135,5 @@ public class Chat extends JFrame {
 		
 		new ClientThread().start();
 		
-	}
-	public static void main(String[] args) {
-		new Chat();
 	}
 }

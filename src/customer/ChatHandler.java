@@ -63,7 +63,6 @@ public class ChatHandler extends JFrame {
 		setTitle("채팅상담 관리자모드");
 		setSize(450,600);
 		setVisible(true);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		btn.addActionListener(new ActionListener() {
 			
@@ -96,7 +95,7 @@ public class ChatHandler extends JFrame {
 			try {
 				serversocket = new ServerSocket(9003); //서버소켓 열기
 				jta.append("***연결중입니다***"+"\n");
-				byte[]data = new byte[100];
+				
 			while(true) {
 				socket = serversocket.accept(); //유저가 accept받아서 연결됨.
 				jta.append("***유저와 연결되었습니다***"+"\n");
@@ -105,8 +104,7 @@ public class ChatHandler extends JFrame {
 				dos = new DataOutputStream(socket.getOutputStream());
 				
 				while(true) {
-					dis.read(data); //유저가 보낸 메세지 읽어오기
-					String msg = new String(data);
+					String msg = dis.readUTF(); //유저가 보낸 메세지 읽어오기
 					jta.append("유저 :"+msg+"\n");
 					jta.setCaretPosition(jta.getText().length());
 				}

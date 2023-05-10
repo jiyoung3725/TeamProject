@@ -2,50 +2,39 @@ package customer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.text.StyledEditorKit.BoldAction;
 
-import com.sist.dao.QnaDAO;
-import com.sist.vo.QnAVo;
+import first.LogInPage;
 
 
 
-public class MainTest extends JFrame {
-	//<íƒ­ ìƒì„±í™”ë©´>
+public class MainTest extends JPanel{
+	//<ÅÇ »ı¼ºÈ­¸é>
 	JTextArea jta_content;
 	JButton btn_chat;
 	JTabbedPane pane;
-	JTabbedPane inner_pane; //ë©”ì¸íƒ­ ì¤‘ 2ê°œì˜ ì´ë„ˆíƒ­ì„ í¬í•¨í•˜ëŠ” íƒ­1 
-	Frequent_QnA tab;		//ë©”ì¸íƒ­ ì¤‘ íƒ­2
-	Inner_qna tab01;		//ì´ë„ˆíƒ­ìœ¼ë¡œ ë„£ì„ í´ë˜ìŠ¤1
-	Qna_List tab02;			//ì´ë„ˆíƒ­ìœ¼ë¡œ ë„£ì„ í´ë˜ìŠ¤2
+	JTabbedPane inner_pane; //¸ŞÀÎÅÇ Áß 2°³ÀÇ ÀÌ³ÊÅÇÀ» Æ÷ÇÔÇÏ´Â ÅÇ1 
+	Frequent_QnA tab;		//¸ŞÀÎÅÇ Áß ÅÇ2
+	Inner_qna tab01;		//ÀÌ³ÊÅÇÀ¸·Î ³ÖÀ» Å¬·¡½º1
+	Qna_List tab02;			//ÀÌ³ÊÅÇÀ¸·Î ³ÖÀ» Å¬·¡½º2
 	
 	public MainTest() {
 		JPanel p1 = new JPanel();
-		JLabel label = new JLabel("í•˜ë¹„íƒ€ìš´ ê³ ê°ì„¼í„°");
-		label.setFont(new Font("ë§‘ì€ê³ ë”•",getFont().BOLD,20));
+		JLabel label = new JLabel("ÇÏºñÅ¸¿î °í°´¼¾ÅÍ");
+		label.setFont(new Font("¸¼Àº°íµñ",getFont().BOLD,20));
 		
-		btn_chat = new JButton("ì±„íŒ… ìƒë‹´í•˜ê¸°");
+		btn_chat = new JButton("Ã¤ÆÃ »ó´ãÇÏ±â");
 		jta_content = new JTextArea();
 	
 	    pane = new JTabbedPane();
@@ -61,18 +50,21 @@ public class MainTest extends JFrame {
 		p.add(btn_chat,BorderLayout.EAST);
 		add(p, BorderLayout.NORTH);
 		
-		pane.addTab("1:1ë¬¸ì˜", inner_pane);
-		pane.addTab("ìì£¼ë¬»ëŠ” ì§ˆë¬¸", tab);
-		inner_pane.addTab("ë¬¸ì˜í•˜ê¸°", tab01);
-		inner_pane.addTab("ë¬¸ì˜ë‚´ì—­", tab02);
+		pane.addTab("1:1¹®ÀÇ", inner_pane);
+		pane.addTab("ÀÚÁÖ¹¯´Â Áú¹®", tab);
+		inner_pane.addTab("¹®ÀÇÇÏ±â", tab01);
+		inner_pane.addTab("¹®ÀÇ³»¿ª", tab02);
+		inner_pane.setPreferredSize(new Dimension(680,480));
+		tab.setPreferredSize(new Dimension(680,480));
+		tab01.setPreferredSize(new Dimension(680,480));
+		tab02.setPreferredSize(new Dimension(680,480));
 		
 		add(pane, BorderLayout.CENTER);
 		
 		setSize(700,600);
 		setVisible(true);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		//<ë¬¸ì˜ê¸€ ë“±ë¡ í›„ ë¬¸ì˜ë‚´ì—­íƒ­ ëˆŒë €ì„ ë•Œ ë“±ë¡ëœ ê°’ì„ ì¶”ê°€í•œ í™”ë©´ì„ ë³´ì—¬ì£¼ëŠ” ì´ë²¤íŠ¸ ë¦¬ìŠ¤ë„ˆ>
+		//<¹®ÀÇ±Û µî·Ï ÈÄ ¹®ÀÇ³»¿ªÅÇ ´­·¶À» ¶§ µî·ÏµÈ °ªÀ» Ãß°¡ÇÑ È­¸éÀ» º¸¿©ÁÖ´Â ÀÌº¥Æ® ¸®½º³Ê>
 		inner_pane.addChangeListener(new ChangeListener() {
 			
 			@Override
@@ -86,26 +78,20 @@ public class MainTest extends JFrame {
 				}
 			}
 		});
-	//<ì‹¤ì‹œê°„ ì±„íŒ…ë²„íŠ¼ì„ ëˆ„ë¥´ë©´ ì±„íŒ…ì°½ ì‹¤í–‰ë˜ëŠ” ì´ë²¤íŠ¸ë¦¬ìŠ¤ë„ˆ>
+		//<½Ç½Ã°£ Ã¤ÆÃ¹öÆ°À» ´©¸£¸é Ã¤ÆÃÃ¢ ½ÇÇàµÇ´Â ÀÌº¥Æ®¸®½º³Ê>
 		btn_chat.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ChatHandler server = new ChatHandler();
-				Chat chat = new Chat();
-
+				 int no = LogInPage.getNO();
+		            if(no==0) {
+		               ChatHandler server = new ChatHandler();
+		            }
+		            else {
+		            Chat chat = new Chat();
+		            }
 			}
 		});
-	
-		
-
 	}
-	
-	public static void main(String[] args) {
-		new MainTest();
-	
-		
-	}
-
 }
 

@@ -16,11 +16,11 @@ import javax.swing.JRadioButton;
 public class Frequent_QnA extends JPanel {
 	JRadioButton rb[] = new JRadioButton[6];
 	String build[] = {"회원탈퇴는 어떻게 하나요?",
-					"개인정보 수정은 어떻게 하나요?",
-					"모임은 지역별로만 만들 수 있나요?",
-					"좋아요를 누른 회원들은 어떻게 확인하나요?",
-					"쪽지는 영구보관인가요?",
-					"계정 신고가 궁금해요"};
+			"개인정보 수정은 어떻게 하나요?",
+			"모임은 지역별로만 만들 수 있나요?",
+			"좋아요를 누른 회원들은 어떻게 확인하나요?",
+			"쪽지는 영구보관인가요?",
+			"계정 신고가 궁금해요"};
 	String text[] = {"\""+"개인정보 수정화면에서 탈퇴버튼을 눌러 탈퇴하실 수 있습니다."+"\"",
 			"\""+"관리탭을 선택하여 개인정보를 수정하실 수 있습니다. "+"\"",
 			"\""+"현재는 가입하신 지역별로 소모임운영이 가능합니다."+"\"",
@@ -56,14 +56,12 @@ public class Frequent_QnA extends JPanel {
 				for(int i=0 ; i<text.length ; i++) {
 					if(e.getItem() == rb[i]) {
 						la.setText(text[i]);
-						la.setFont(new Font("맑은고딕",getFont().BOLD, 15));
+						la.setFont(new Font("맑은 고딕",getFont().BOLD, 15));
 					}
 				}
 			}
 		}
 	
-	public static void main(String[] args) {
-		new Frequent_QnA();
-	}
+	
 	}
 }

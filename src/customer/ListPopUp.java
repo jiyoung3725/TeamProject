@@ -16,8 +16,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import com.sist.dao.QnaDAO;
-import com.sist.vo.QnAVo;
+import dao.QnaDAO;
+import vo.QnAVo;
 
 public class ListPopUp extends JFrame {
 	JTextArea answer;
@@ -29,7 +29,7 @@ public class ListPopUp extends JFrame {
 		jta.setEditable(false);
 		answer = new JTextArea(5,40);
 		JScrollPane jsp = new JScrollPane(answer);
-		btn_add = new JButton("Îì±Î°ù");
+		btn_add = new JButton("µÓ∑œ");
 		JPanel p = new JPanel();
 		JPanel p2 = new JPanel();
 		p.add(jsp2);
@@ -38,7 +38,7 @@ public class ListPopUp extends JFrame {
 
 		add(p, BorderLayout.CENTER);
 		add(p2, BorderLayout.SOUTH);
-		setTitle("ÎãµÎ≥Ä");
+		setTitle("¥‰∫Ø");
 		setSize(500,400);
 		setVisible(true);
 		
