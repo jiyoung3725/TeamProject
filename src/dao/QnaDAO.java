@@ -7,21 +7,35 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
-import javax.xml.xpath.XPathEvaluationResult.XPathResultType;
+import customer.Inner_qna;
+import vo.QnAVo;
 
-import com.sist.vo.QnAVo;
-
-import DB.ConnectionProvider;
+import db.ConnectionProvider;
+import first.LogInPage;
 
 public class QnaDAO {
 	
-
+	//À¯Àú°¡ QnA_list¿¡¼­ »èÁ¦¹öÆ°À» ´­·¶À» ¶§ answer, qnaÅ×ÀÌºí¿¡¼­µµ µ¥ÀÌÅÍ°¡ »èÁ¦µÇ´Â ¸Ş¼Òµå
+	public int deleteList(int no) {
+		int re = -1;
+		String sql = "delete qna where q_no = ? ";
+		try {
+			Connection conn = ConnectionProvider.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, no);
+			re = pstmt.executeUpdate();
+			ConnectionProvider.close(pstmt, conn);
+		}catch(Exception e) {
+			System.out.println("deleteList() ¿¹¿Ü¹ß»ı :" + e.getMessage());
+		}
+		return re;
+	}
+	 
 	
-	
-	//<ê´€ë¦¬ìì˜ ë‹µë³€ ë“±ë¡ í›„ jtableì˜ ì²˜ë¦¬ìƒíƒœê°€ ë³€ê²½ë˜ëŠ” ë©”ì†Œë“œ>
+	//<°ü¸®ÀÚÀÇ ´äº¯ µî·Ï ÈÄ jtableÀÇ Ã³¸®»óÅÂ°¡ º¯°æµÇ´Â ¸Ş¼Òµå>
 	public int updateStatus(int no) {
 		int re = -1;
-		String sql = "update qna set q_status='ë‹µë³€ì™„ë£Œ' where q_no = ?";
+		String sql = "update qna set q_status='´äº¯¿Ï·á' where q_no = ?";
 		try {
 			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -29,16 +43,16 @@ public class QnaDAO {
 			re = pstmt.executeUpdate();
 			ConnectionProvider.close(pstmt, conn);
 		}catch(Exception v) {
-			System.out.println("ì˜ˆì™¸ë°œìƒ : "+ v.getMessage());
+			System.out.println("updateStatus() ¿¹¿Ü¹ß»ı : "+ v.getMessage());
 		}
 		return re;
 	}
 	
 	
-	//<ë‹µë³€ì„ JTextAreaì—ì„œ ì¡°íšŒí•˜ëŠ” ë©”ì†Œë“œ>
+	//<´äº¯À» JTextArea¿¡¼­ Á¶È¸ÇÏ´Â ¸Ş¼Òµå>
 		public ArrayList<QnAVo> searchAnswer(int q_no){
 			ArrayList<QnAVo> list = new ArrayList<QnAVo>();
-			String sql = "select a_content from answer where q_no=?";
+			String sql = "select a_content from answer where q_no=? ";
 			try {
 				Connection conn = ConnectionProvider.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -51,74 +65,112 @@ public class QnaDAO {
 					list.add(v);
 				} ConnectionProvider.close(rs, pstmt, conn);
 			}catch(Exception q) {
-				System.out.println("ì˜ˆì™¸ë°œìƒ" + q.getMessage());
+				System.out.println("searchAnswer() ¿¹¿Ü¹ß»ı" + q.getMessage());
 			}
 			return list;
 		}
 	
 	
-	//<ê´€ë¦¬ìì˜ ë‹µë³€ì„ ë“±ë¡(ì´ì§€ë§Œ ì´ë¯¸ í…… ë¹ˆ ë ˆì½”ë“œê°€ ìˆì–´ ìˆ˜ì •)í•˜ëŠ” ë©”ì„œë“œ (ListPopUpì°½ ë“±ë¡ ë²„íŠ¼ ì‹¤í–‰ ì‹œ)>
-		public int addAnswer(String a_content, int q_no) {
+	//<°ü¸®ÀÚÀÇ ´äº¯À» µî·Ï(ÀÌÁö¸¸ ÀÌ¹Ì ÅÖ ºó ·¹ÄÚµå°¡ ÀÖ¾î ¼öÁ¤)ÇÏ´Â ¸Ş¼­µå (ListPopUpÃ¢ µî·Ï ¹öÆ° ½ÇÇà ½Ã)>
+		public int addAnswer(String a_content, int q_no, int u_no) {
+			
 			int re = -1;
-			String sql = "update answer set a_date = default, a_content = ? where q_no = ?  ";
+			String sql = "update answer set a_date = default, a_content = ? where q_no = ? and user_no=? ";
 			try {
 				Connection conn = ConnectionProvider.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, a_content);
 				pstmt.setInt(2, q_no);
+				pstmt.setInt(3, u_no);
 				re=pstmt.executeUpdate();
 				ConnectionProvider.close(pstmt, conn);
 			}catch(Exception g) {
-				System.out.println("ì˜ˆì™¸ë°œìƒ :" + g.getMessage());
+				System.out.println("addanswer() ¿¹¿Ü¹ß»ı :" + g.getMessage());
 			}
 			return  re;
 		}
 	
-	//<ì‚¬ìš©ìê°€ ë¬¸ì˜ê¸€ì„ ì‘ì„±í•  ë•Œ ë‹µë³€í…Œì´ë¸”ì— ê³µë°±ì´ ì¶”ê°€ë˜ëŠ” ë©”ì†Œë“œ> ë‹µë³€ì´ ì—†ìœ¼ë©´ rowDataì— ì¶”ê°€ê°€ ì•ˆë¼ì„œ ë„£ìŒ.
+	//<»ç¿ëÀÚ°¡ ¹®ÀÇ±ÛÀ» ÀÛ¼ºÇÒ ¶§ ´äº¯Å×ÀÌºí¿¡ °ø¹éÀÌ Ãß°¡µÇ´Â ¸Ş¼Òµå> ´äº¯ÀÌ ¾øÀ¸¸é rowData¿¡ Ãß°¡°¡ ¾ÈµÅ¼­ ³ÖÀ½.
 		public int blankAnswer() {
 			int re = -1;
-			String sql = "insert into answer values((SELECT NVL( MAX(a_no), 0) + 1 FROM answer ),(select max(q_no) from qna),null,null)";
+			String sql = "insert into answer values((SELECT NVL( MAX(a_no), 0) + 1 FROM answer ),(select max(q_no) from qna),null,null,0)";
 			try {
 				Connection conn = ConnectionProvider.getConnection();
-				Statement stmt = conn.createStatement();
-				re = stmt.executeUpdate(sql);
-				ConnectionProvider.close(stmt, conn);
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				re = pstmt.executeUpdate();
+				ConnectionProvider.close(pstmt, conn);
 			}catch(Exception t) {
-				System.out.println("ì˜ˆì™¸ë°œìƒ :" +t.getMessage());
+				System.out.println("blank answer() ¿¹¿Ü¹ß»ı :" +t.getMessage());
 			}
 			return re;
 		}
 	
-	//<ì‚¬ìš©ìê°€ ì…ë ¥í•œ ë‚´ìš©ì„ ë“±ë¡í•˜ëŠ” ë©”ì†Œë“œ>
-	public int addData(String q_type, String q_mail, String q_title, String q_content){
-		String sql ="insert into qna values(( SELECT NVL( MAX(q_no) , 0) + 1 FROM qna ),?,?,?,?,null,default,default,3)";
+	//<»ç¿ëÀÚ°¡ ÀÔ·ÂÇÑ ³»¿ëÀ» µî·ÏÇÏ´Â ¸Ş¼Òµå>
+	public int addData(String type, String mail, String title, String content, int no){
+		String sql ="insert into qna values((SELECT NVL( MAX(q_no), 0) + 1 FROM qna),?,?,?,?,null,default,default,?)";
+	
+		if(type.equals("") || mail.equals("") || title.equals("") || content.equals("") ||Inner_qna.check_b.isSelected()==false) {
+		        return 0;
+		 }
 		int count =-1;
 		try {
 			Connection conn = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, q_type);
-			pstmt.setString(2, q_mail);
-			pstmt.setString(3, q_title);
-			pstmt.setString(4, q_content);
-
+			pstmt.setString(1, type);
+			pstmt.setString(2, mail);
+			pstmt.setString(3, title);
+			pstmt.setString(4, content);
+			pstmt.setInt(5, no);
 			count = pstmt.executeUpdate();
 			ConnectionProvider.close(pstmt, conn);
 		}catch(Exception d) {
-			System.out.println("ì˜ˆì™¸ë°œìƒ :" +d.getMessage());
+			System.out.println("addData() ¿¹·¯¹ß»ı :" +d.getMessage());
+			d.printStackTrace();
 		}
 		return count;
 	}
 
-	
+//<À¯ÀúÀÏ ¶§ À¯Àú°¡ ÀÛ¼ºÇÑ ¸ñ·Ï¸¸ º¸ÀÌ´Â ¸Ş¼Òµå>
+		public ArrayList<QnAVo> addList(int no){
+			ArrayList<QnAVo> list = new ArrayList<QnAVo>();
+			String sql = "select q.q_no, q_type, q_title, q_inquirdate, q_status, a.a_date from qna q, answer a where q.q_no = a.q_no and q.user_no = ? order by q.q_no";
+			try{
+				Connection conn = db.ConnectionProvider.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt.setInt(1, no);
+				ResultSet rs = pstmt.executeQuery();
+				while(rs.next()) {
+					int q_no = rs.getInt(1);
+					String q_type = rs.getString(2);
+					String q_title = rs.getString(3);
+					Date q_inquirdate = rs.getDate(4);
+					String q_status = rs.getString(5);
+					Date a_date = rs.getDate(6);
+					QnAVo v =new QnAVo();
+					v.setQ_no(q_no);
+					v.setQ_type(q_type);
+					v.setQ_title(q_title);
+					v.setQ_inquirdate(q_inquirdate);
+					v.setQ_status(q_status);
+					v.setA_date(a_date);
+					list.add(v);
+				}db.ConnectionProvider.close(rs, pstmt, conn);
+				
+			}catch(Exception c) {
+				System.out.println("addList(no) ¿¹¿Ü¹ß»ı :" + c.getMessage());
+			}
+			return list;
+			
+		}
 
-//<ë¬¸ì˜ë‚´ì—­ì˜ JTable rowDataì— ê°’ ì¶œë ¥í•˜ëŠ” ë©”ì†Œë“œ>
+//<°ü¸®ÀÚÀÏ ¶§ ¹®ÀÇ³»¿ªÀÇ JTable rowData¿¡ °ª Ãâ·ÂÇÏ´Â ¸Ş¼Òµå>
 	public ArrayList<QnAVo> addList(){
 		ArrayList<QnAVo> list = new ArrayList<QnAVo>();
 		String sql = "select q.q_no, q_type, q_title, q_inquirdate, q_status, a.a_date from qna q, answer a where q.q_no = a.q_no order by q.q_no";
 		try{
-			Connection conn = DB.ConnectionProvider.getConnection();
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
+			Connection conn = db.ConnectionProvider.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
 			while(rs.next()) {
 				int q_no = rs.getInt(1);
 				String q_type = rs.getString(2);
@@ -134,10 +186,10 @@ public class QnaDAO {
 				v.setQ_status(q_status);
 				v.setA_date(a_date);
 				list.add(v);
-			}DB.ConnectionProvider.close(rs, stmt, conn);
+			}db.ConnectionProvider.close(rs, pstmt, conn);
 			
 		}catch(Exception c) {
-			System.out.println("ì˜ˆì™¸ë°œìƒ :" + c.getMessage());
+			System.out.println("addList() ¿¹¿Ü¹ß»ı :" + c.getMessage());
 		}
 		return list;
 		
